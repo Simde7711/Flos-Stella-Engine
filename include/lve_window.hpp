@@ -17,13 +17,18 @@ namespace lve
 
             bool ShouldClose(){ return glfwWindowShouldClose(window);}
             VkExtent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};}
+            bool WasWindowResized() { return framebufferResized; }
+            void ResetWindowResizedFlag() { framebufferResized = false; }
             void CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
         private:
+            int width;
+            int height;
+            bool framebufferResized = false;
+
             GLFWwindow *window;
-            const int width;
-            const int height;
             std::string windowName;
 
             void InitWindow();
+            static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
     };
 }
