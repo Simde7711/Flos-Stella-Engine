@@ -25,6 +25,8 @@ namespace lve
             glfwPollEvents();
             DrawFrame();
         }
+
+        vkDeviceWaitIdle(lveDevice.device());
     }
 
     void FirstApp::CreatePipelineLayout()
