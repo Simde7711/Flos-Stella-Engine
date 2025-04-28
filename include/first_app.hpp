@@ -34,7 +34,7 @@ namespace lve
             void RecreateSwapChain();
             void RecordCommandBuffer(int imageIndex);
 
-            LveWindow lveWindow{WIDTH, HEIGHT, "Hello World"};
+            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine"};
             LveDevice lveDevice{lveWindow};
             std::unique_ptr<LveSwapChain> lveSwapChain;
             std::unique_ptr<LvePipeline> lvePipeline;
