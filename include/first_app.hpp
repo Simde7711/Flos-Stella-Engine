@@ -4,7 +4,8 @@
 #include "lve_pipeline.hpp"
 #include "lve_device.hpp"
 #include "lve_swap_chain.hpp"
-#include "lve_model.hpp"
+#include "lve_game_object.hpp"
+
 
 #include <vector>
 #include <memory>
@@ -25,7 +26,7 @@ namespace lve
 
             void run();
         private:
-            void LoadModel();
+            void LoadGameObjects();
             void CreatePipelineLayout();
             void CreatePipeline();
             void CreateCommandBuffers();
@@ -33,13 +34,14 @@ namespace lve
             void DrawFrame();
             void RecreateSwapChain();
             void RecordCommandBuffer(int imageIndex);
+            void RenderGameObjects(VkCommandBuffer commandBuffer);
 
-            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine"};
+            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.0000000000000000000000000000000000000000000000000000000000000000001"};
             LveDevice lveDevice{lveWindow};
             std::unique_ptr<LveSwapChain> lveSwapChain;
             std::unique_ptr<LvePipeline> lvePipeline;
             VkPipelineLayout pipelineLayout;
             std::vector<VkCommandBuffer> commandBuffers;
-            std::unique_ptr<LveModel> lveModel;
+            std::vector<LveGameObject> gameObjects;
     };
 }
