@@ -68,15 +68,16 @@ namespace lve
     {
         lvePipeline->Bind(commandBuffer);
 
+        auto projectionView = camera.GetProjection() * camera.GetView();
+
         for (auto &obj:gameObjects)
         {
             obj.transform.rotation = glm::mod(obj.transform.rotation + 0.005f, glm::two_pi<float>());
 
             SinglePushConstantData push{};
             push.color = obj.color;
-            push.transform = camera.GetProjection() * obj.transform.mat4();
+            push.transform = projectionView * obj.transform.mat4();
 
-            
 
             vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SinglePushConstantData), &push);
 
