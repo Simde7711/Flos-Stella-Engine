@@ -72,7 +72,7 @@ namespace lve
 
         for (auto &obj:gameObjects)
         {
-            obj.transform.rotation = glm::mod(obj.transform.rotation + 0.005f, glm::two_pi<float>());
+            // obj.transform.rotation = glm::mod(obj.transform.rotation + 0.005f, glm::two_pi<float>());
 
             SinglePushConstantData push{};
             push.color = obj.color;
