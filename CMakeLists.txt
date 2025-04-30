@@ -18,6 +18,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/external/glfw-3.4.bin.WIN64/include
     ${CMAKE_SOURCE_DIR}/external/glm
+    ${CMAKE_SOURCE_DIR}/external/tinyObjLoader
     $ENV{VULKAN_SDK}/Include
 )
 

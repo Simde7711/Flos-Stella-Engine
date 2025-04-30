@@ -27,7 +27,7 @@ namespace lve
         private:
             void LoadGameObjects();
 
-            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.0000000000000000000000000000000000000000000000000000000000000000001"};
+            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.00000000000000000000000000000000000000000000000001"};
             LveDevice lveDevice{lveWindow};
             LveRenderer lveRenderer{lveWindow, lveDevice};
             std::vector<LveGameObject> gameObjects;
