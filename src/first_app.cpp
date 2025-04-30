@@ -69,14 +69,20 @@ namespace lve
 
     void FirstApp::LoadGameObjects()
     {
-        std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\smooth_vase.obj");
+        std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\flat_vase.obj");
+        auto flatVase = LveGameObject::CreateGameObject();
+        flatVase.model = lveModel;
+        flatVase.transform.translation = {-.5f, .5f, 2.5f};
+        flatVase.transform.rotation.z = 0.f;
+        flatVase.transform.scale = {3.f, 1.5, 3.f};
+        gameObjects.push_back(std::move(flatVase));
 
-        auto gameObject = LveGameObject::CreateGameObject();
-        gameObject.model = lveModel;
-        gameObject.transform.translation = {.0f, .0f, 2.5f};
-        gameObject.transform.rotation.z = 0.f;
-        gameObject.transform.scale = glm::vec3(3.f);
-
-        gameObjects.push_back(std::move(gameObject));
+        lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\smooth_vase.obj");
+        auto smoothVase = LveGameObject::CreateGameObject();
+        smoothVase.model = lveModel;
+        smoothVase.transform.translation = {.5f, .5f, 2.5f};
+        smoothVase.transform.rotation.z = 0.f;
+        smoothVase.transform.scale = glm::vec3(3.f);
+        gameObjects.push_back(std::move(smoothVase));
     }
 }
