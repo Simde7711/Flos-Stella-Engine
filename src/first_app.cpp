@@ -53,7 +53,7 @@ namespace lve
 
             float aspect = lveRenderer.GetAspectRatio();
             // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-            camera.SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+            camera.SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 80.f);
 
             if (auto commandBuffer = lveRenderer.BeginFrame())
             {
