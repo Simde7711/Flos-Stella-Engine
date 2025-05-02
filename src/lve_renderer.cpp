@@ -79,7 +79,7 @@ namespace lve
     {
         assert(!isFrameStarted && "cannot begin frame if its already started");
 
-        auto result = lveSwapChain->acquireNextImage(&currenImageIndex);
+        auto result = lveSwapChain->acquireNextImage(&currentImageIndex);
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
@@ -94,6 +94,7 @@ namespace lve
         isFrameStarted = true;
 
         auto commandBuffer = GetCurrentCommandBuffer();
+        assert(commandBuffer != VK_NULL_HANDLE && "Command buffer is null!");
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         
@@ -116,7 +117,7 @@ namespace lve
             throw std::runtime_error("failed to record command buffer");
         }
 
-        auto result = lveSwapChain->submitCommandBuffers(&commandBuffer, &currenImageIndex);
+        auto result = lveSwapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || lveWindow.WasWindowResized())
         {
             lveWindow.ResetWindowResizedFlag();
@@ -139,7 +140,7 @@ namespace lve
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         renderPassInfo.renderPass = lveSwapChain->getRenderPass();
-        renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currenImageIndex);
+        renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
 
         renderPassInfo.renderArea.offset = {0, 0};
         renderPassInfo.renderArea.extent = lveSwapChain->getSwapChainExtent();

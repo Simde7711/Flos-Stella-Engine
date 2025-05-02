@@ -7,9 +7,15 @@ layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec3 fragColor;
 
+layout(set = 0, binding = 0) uniform GlobalUno
+{
+    mat4 projectionViewMatrix;
+    vec3 directionToLight;
+} globalUno;
+
 layout(push_constant) uniform Push
 {
-    mat4 transform;
+    mat4 modelMatrix;
     mat4 normalMatrix;
 } push;
 
@@ -18,11 +24,11 @@ const float AMBIENT = 0.02;
 
 void main()
 {
-    gl_Position = push.transform * vec4(position, 1.0f);
+    gl_Position = globalUno.projectionViewMatrix * push.modelMatrix * vec4(position, 1.0f);
 
     vec3 normalWorldSpace = normalize(mat3(push.normalMatrix) * normal);
 
-    float lightIntensity = AMBIENT + max(dot(normalWorldSpace, DIRECTION_TO_LIGHT), 0);
+    float lightIntensity = AMBIENT + max(dot(normalWorldSpace, globalUno.directionToLight), 0);
 
     fragColor =  lightIntensity * color;
 }

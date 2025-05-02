@@ -4,8 +4,9 @@
 #include "lve_device.hpp"
 #include "lve_game_object.hpp"
 #include "lve_renderer.hpp"
+#include "lve_descriptors.hpp"
 
-
+// std
 #include <vector>
 #include <memory>
 
@@ -30,6 +31,7 @@ namespace lve
             LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.00000000000000000000000000000000000000000000000001"};
             LveDevice lveDevice{lveWindow};
             LveRenderer lveRenderer{lveWindow, lveDevice};
+            std::unique_ptr<LveDescriptorPool> globalPool{};
             std::vector<LveGameObject> gameObjects;
     };
 }

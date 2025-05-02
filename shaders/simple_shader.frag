@@ -4,11 +4,11 @@ layout(location = 0) in vec3 fragColor;
 
 layout(location = 0) out vec4 outColor;
 
-layout(push_constant) uniform Push
+layout(set = 0, binding = 0) uniform GlobalUno
 {
-    mat4 transform;
-    mat4 normalMatrix;
-} push;
+    mat4 projectionViewMatrix;
+    vec3 directionToLight;
+} globalUno;
 
 void main()
 {

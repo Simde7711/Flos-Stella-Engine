@@ -52,8 +52,8 @@ namespace lve
             std::unique_ptr<LveSwapChain> lveSwapChain;
             std::vector<VkCommandBuffer> commandBuffers;
 
-            uint32_t currenImageIndex;
-            int currentFrameIndex;
+            uint32_t currentImageIndex;
+            int currentFrameIndex{0};
             bool isFrameStarted;
     };
 }
