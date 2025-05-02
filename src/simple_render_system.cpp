@@ -66,15 +66,16 @@ namespace lve
         );
     }
 
-    void SimpleRenderSystem::RenderGameObjects(FrameInfo &frameInfo, std::vector<LveGameObject> &gameObjects)
+    void SimpleRenderSystem::RenderGameObjects(FrameInfo &frameInfo)
     {
         lvePipeline->Bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-        for (auto &obj:gameObjects)
+        for (auto &kv : frameInfo.gameObjects)
         {
-            // obj.transform.rotation = glm::mod(obj.transform.rotation + 0.005f, glm::two_pi<float>());
+            auto &obj = kv.second;
+            if (obj.model == nullptr) continue;
 
             SinglePushConstantData push{};
             push.modelMatrix = obj.transform.mat4();
