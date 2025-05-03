@@ -21,6 +21,7 @@ namespace lve
             PointLightRender(const LveWindow &) = delete;
             PointLightRender &operator = (const LveWindow &) = delete;
 
+            void Update(FrameInfo &frameInfo, GlobalUbo &globalUbo);
             void Render(FrameInfo &frameInfo);
         private:
             void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
