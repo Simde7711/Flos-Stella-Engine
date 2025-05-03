@@ -115,8 +115,11 @@ namespace lve
 
                 // render
                 lveRenderer.BeginSwapChainRenderPass(commandBuffer);
+
+                // order here matters
                 simpleRenderSystem.RenderGameObjects(frameInfo);
                 pointLightSystem.Render(frameInfo);
+
                 lveRenderer.EndSwapChainRenderPass(commandBuffer);
                 lveRenderer.EndFrame();
             }

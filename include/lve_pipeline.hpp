@@ -8,7 +8,12 @@
 
 namespace lve
 {
-    struct PipelineConfigInfo {
+    struct PipelineConfigInfo 
+    {
+        PipelineConfigInfo() = default;
+        PipelineConfigInfo(const PipelineConfigInfo &) = delete;
+        PipelineConfigInfo &operator=(const PipelineConfigInfo &) = delete;
+
         std::vector<VkVertexInputBindingDescription> bindingDescriptions{};
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
         VkPipelineViewportStateCreateInfo viewportInfo;
@@ -36,6 +41,7 @@ namespace lve
 
             void Bind(VkCommandBuffer commandBuffer);
             static void defaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
+            static void EnableAlphaBlending(PipelineConfigInfo &configInfo);
 
         private:
             static std::vector<char> ReadFile(const std::string& filepath);

@@ -21,6 +21,7 @@ namespace lve
             const glm::mat4 &GetProjection() const { return projectionMatrix; }
             const glm::mat4 &GetView() const { return viewMatrix; }
             const glm::mat4 &GetInverseView() const { return inverseViewMatrix; }
+            const glm::vec3 GetPosition() const { return glm::vec3(inverseViewMatrix[3]); }
 
         private:
             glm::mat4 projectionMatrix{1.f};
