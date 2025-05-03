@@ -108,6 +108,7 @@ namespace lve
                 GlobalUbo ubo{};
                 ubo.projection = camera.GetProjection();
                 ubo.view = camera.GetView();
+                ubo.inverseView = camera.GetInverseView();
                 pointLightSystem.Update(frameInfo, ubo);
                 uboBuffers[frameIndex]->writeToBuffer(&ubo);
                 uboBuffers[frameIndex]->flush();
