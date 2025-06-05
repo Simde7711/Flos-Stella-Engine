@@ -8,6 +8,10 @@ namespace lve
     class LveBuffer 
     {
     public:
+
+    static inline int64_t globalBufferID = 0;
+    int64_t bufferID;
+
     LveBuffer(
         LveDevice& device,
         VkDeviceSize instanceSize,

@@ -10,7 +10,7 @@
 // std
 #include <cassert>
 #include <cstring>
-// #include <iostream>
+#include <iostream>
 #include <unordered_map>
 
 namespace std
@@ -33,11 +33,13 @@ namespace lve
     {
         CreateVertexBuffers(builder.vertices);
         CreateIndexBuffers(builder.indices);
+
+        std::cout << "[LveModel] Created from file, addr=" << this << "\n";
     }
 
     LveModel::~LveModel()
     {
-       
+       std::cout << "[LveModel] Destroyed, addr=" << this << "\n";
     }
 
     std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice &device, const std::string &filepath)

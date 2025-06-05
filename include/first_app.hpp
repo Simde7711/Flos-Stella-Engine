@@ -2,9 +2,9 @@
 
 #include "lve_window.hpp"
 #include "lve_device.hpp"
-#include "lve_game_object.hpp"
 #include "lve_renderer.hpp"
 #include "lve_descriptors.hpp"
+#include "ECS/coordinator.hpp"
 
 // std
 #include <vector>
@@ -28,10 +28,9 @@ namespace lve
         private:
             void LoadGameObjects();
 
-            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.00000000000000000000000000000000000000000000000001"};
+            LveWindow lveWindow{WIDTH, HEIGHT, "Penis Engine V0.00000000000000000000000000000000000001"};
             LveDevice lveDevice{lveWindow};
             LveRenderer lveRenderer{lveWindow, lveDevice};
             std::unique_ptr<LveDescriptorPool> globalPool{};
-            LveGameObject::Map gameObjects;
     };
 }

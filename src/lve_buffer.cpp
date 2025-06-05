@@ -10,6 +10,7 @@
  // std
  #include <cassert>
  #include <cstring>
+ #include <iostream>
   
  namespace lve {
   
@@ -41,15 +42,39 @@
        instanceCount{instanceCount},
        usageFlags{usageFlags},
        memoryPropertyFlags{memoryPropertyFlags} {
+
+   buffer = VK_NULL_HANDLE;     
+   memory = VK_NULL_HANDLE;     
    alignmentSize = getAlignment(instanceSize, minOffsetAlignment);
    bufferSize = alignmentSize * instanceCount;
    device.createBuffer(bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
+   
+   bufferID = globalBufferID++;
+   std::cout << "[LveBuffer] Created buffer ID: " << bufferID << " (" << buffer << ")\n";
+
+   device.TrackBuffer(buffer);
+   device.TrackMemory(memory);
  }
   
- LveBuffer::~LveBuffer() {
+ LveBuffer::~LveBuffer() 
+ {
    unmap();
-   vkDestroyBuffer(lveDevice.device(), buffer, nullptr);
-   vkFreeMemory(lveDevice.device(), memory, nullptr);
+
+  if (buffer != VK_NULL_HANDLE) 
+  {
+    vkDestroyBuffer(lveDevice.device(), buffer, nullptr);
+    lveDevice.UntrackBuffer(buffer);
+    buffer = VK_NULL_HANDLE;
+  }
+
+  if (memory != VK_NULL_HANDLE) 
+  {
+    vkFreeMemory(lveDevice.device(), memory, nullptr);
+    lveDevice.UntrackMemory(memory);
+    memory = VK_NULL_HANDLE;
+  }
+
+  std::cout << "[LveBuffer] Destroying buffer ID: " << bufferID << " (" << buffer << ")\n";
  }
   
  /**

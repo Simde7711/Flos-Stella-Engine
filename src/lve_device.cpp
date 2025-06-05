@@ -57,6 +57,22 @@ LveDevice::LveDevice(LveWindow &window) : window{window} {
 }
 
 LveDevice::~LveDevice() {
+
+  if (!trackedBuffers.empty()) 
+  {
+    std::cerr << "[LveDevice] Warning: " << trackedBuffers.size() << " VkBuffer(s) still tracked!\n";
+  }
+
+  if (!trackedMemory.empty()) 
+  {
+    std::cerr << "[LveDevice] Warning: " << trackedMemory.size() << " VkDeviceMemory object(s) still tracked!\n";
+  }
+
+  for (auto buffer : trackedBuffers) 
+  {
+    std::cerr << "  Leaked VkBuffer: " << buffer << "\n";
+  }
+
   vkDestroyCommandPool(device_, commandPool, nullptr);
   vkDestroyDevice(device_, nullptr);
 
@@ -416,7 +432,7 @@ void LveDevice::createBuffer(
   bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
   if (vkCreateBuffer(device_, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-    throw std::runtime_error("failed to create vertex buffer!");
+    throw std::runtime_error("failed to create buffer!");
   }
 
   VkMemoryRequirements memRequirements;
@@ -428,7 +444,7 @@ void LveDevice::createBuffer(
   allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
   if (vkAllocateMemory(device_, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-    throw std::runtime_error("failed to allocate vertex buffer memory!");
+    throw std::runtime_error("failed to allocate buffer memory!");
   }
 
   vkBindBufferMemory(device_, buffer, bufferMemory, 0);
@@ -530,5 +546,28 @@ void LveDevice::createImageWithInfo(
     throw std::runtime_error("failed to bind image memory!");
   }
 }
+
+  void LveDevice::TrackBuffer(VkBuffer buffer)
+  {
+    std::scoped_lock lock(trackMutex);
+    trackedBuffers.insert(buffer);
+  }
+  void LveDevice::UntrackBuffer(VkBuffer buffer)
+  {
+    std::scoped_lock lock(trackMutex);
+    trackedBuffers.erase(buffer);
+  }
+
+  void LveDevice::TrackMemory(VkDeviceMemory memory)
+  {
+    std::scoped_lock lock(trackMutex);
+    trackedMemory.insert(memory);
+  }
+
+  void LveDevice::UntrackMemory(VkDeviceMemory memory)
+  {
+    std::scoped_lock lock(trackMutex);
+    trackedMemory.erase(memory);
+  }
 
 }

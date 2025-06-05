@@ -1,6 +1,7 @@
 #pragma once
 
-#include "lve_game_object.hpp"
+// #include "lve_game_object.hpp"
+#include "ECS/components/components.hpp"
 #include "lve_window.hpp"
 
 namespace lve
@@ -24,6 +25,6 @@ namespace lve
             float moveSpeed{3.f};
             float lookSpeed{1.5f};
 
-            void MoveInPlaneXZ(GLFWwindow *window, float deltaTime, LveGameObject &gameObject);
+            void MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform &transform);
     };
 }

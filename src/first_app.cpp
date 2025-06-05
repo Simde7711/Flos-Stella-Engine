@@ -1,8 +1,8 @@
 #include "First_app.hpp"
 
 #include "keyboard_movement_controller.hpp"
-#include "systems/simple_render_system.hpp"
-#include "systems/point_light_system.hpp"
+#include "systems/renderSystems/simple_render_system.hpp"
+#include "systems/componentSystems/pointLightSystem.hpp"
 #include "lve_camera.hpp"
 #include "lve_buffer.hpp"
 #include "lve_frame_info.hpp"
@@ -22,6 +22,8 @@ namespace lve
 {
     FirstApp::FirstApp()
     {
+        gCoordinator.Init();
+
         globalPool = LveDescriptorPool::Builder(lveDevice)
             .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
             .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, LveSwapChain::MAX_FRAMES_IN_FLIGHT)
@@ -36,6 +38,16 @@ namespace lve
 
     void FirstApp::run()
     {
+        int modelCount = 0;
+        for (Entity entity : gCoordinator.mEntities) 
+        {
+            if (gCoordinator.HasComponent<Model>(entity)) {
+                std::cout << "[DEBUG] Entity " << entity << " has Model component\n";
+                ++modelCount;
+            }
+        }
+        std::cout << "[DEBUG] Total Model components: " << modelCount << "\n";
+
         std::vector<std::unique_ptr<LveBuffer>> uboBuffers(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
         for (int i = 0; i < uboBuffers.size(); i++)
         {
@@ -62,16 +74,21 @@ namespace lve
                 .writeBuffer(0, &bufferInfo)
                 .build(globalDescriptorSets[i]);
         }
-
+        
+        // render systems
         SimpleRenderSystem simpleRenderSystem{lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
-        PointLightRender pointLightSystem{lveDevice, lveRenderer.GetSwapChainRenderPass(), globalSetLayout->getDescriptorSetLayout()};
+       
+        // component system
+        PointLightSystem pointLightSystem{};
         
         LveCamera camera{}; 
         // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
         camera.SetViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
-        auto viewerObject = LveGameObject::CreateGameObject();
-        viewerObject.transform.translation.z = -2.5f;
+        // créer l'entity de la caméra
+        Entity entityCamera = gCoordinator.CreateEntity();
+        gCoordinator.GetComponent<Transform>(entityCamera).translation.z = -2.5f;;
+
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();
@@ -84,8 +101,8 @@ namespace lve
             float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
             currentTime = newTime;
 
-            cameraController.MoveInPlaneXZ(lveWindow.GetGLFWwindow(), frameTime, viewerObject);
-            camera.SetViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+            cameraController.MoveInPlaneXZ(lveWindow.GetGLFWwindow(), frameTime, gCoordinator.GetComponent<Transform>(entityCamera));
+            camera.SetViewYXZ(gCoordinator.GetComponent<Transform>(entityCamera).translation, gCoordinator.GetComponent<Transform>(entityCamera).rotation);
 
             float aspect = lveRenderer.GetAspectRatio();
             // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
@@ -100,8 +117,7 @@ namespace lve
                     frameTime,
                     commandBuffer,
                     camera,
-                    globalDescriptorSets[frameIndex],
-                    gameObjects
+                    globalDescriptorSets[frameIndex]
                 };
 
                 // update
@@ -118,7 +134,6 @@ namespace lve
 
                 // order here matters
                 simpleRenderSystem.RenderGameObjects(frameInfo);
-                pointLightSystem.Render(frameInfo);
 
                 lveRenderer.EndSwapChainRenderPass(commandBuffer);
                 lveRenderer.EndFrame();
@@ -126,33 +141,44 @@ namespace lve
         }
 
         vkDeviceWaitIdle(lveDevice.device());
+        
+        gCoordinator.DestroyAllEntity();
     }
 
     void FirstApp::LoadGameObjects()
     {
-        std::shared_ptr<LveModel> lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\flat_vase.obj");
-        auto flatVase = LveGameObject::CreateGameObject();
-        flatVase.model = lveModel;
-        flatVase.transform.translation = {-.5f, .5f, 0.f};
-        flatVase.transform.rotation.z = 0.f;
-        flatVase.transform.scale = {3.f, 1.5, 3.f};
-        gameObjects.emplace(flatVase.GetId(), std::move(flatVase));
+        Entity flatVase = gCoordinator.CreateEntity();
 
-        lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\smooth_vase.obj");
-        auto smoothVase = LveGameObject::CreateGameObject();
-        smoothVase.model = lveModel;
-        smoothVase.transform.translation = {.5f, .5f, 0.f};
-        smoothVase.transform.rotation.z = 0.f;
-        smoothVase.transform.scale = glm::vec3(3.f);
-        gameObjects.emplace(smoothVase.GetId(), std::move(smoothVase));
+        gCoordinator.AddComponent(flatVase, Model{LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\flat_vase.obj")});
 
-        lveModel = LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\quad.obj");
-        auto floor = LveGameObject::CreateGameObject();
-        floor.model = lveModel;
-        floor.transform.translation = {0.f, .5f, 0.f};
-        floor.transform.scale = {3.f, 1.f, 3.f};
-        gameObjects.emplace(floor.GetId(), std::move(floor));
+        Transform &transform1 = gCoordinator.GetComponent<Transform>(flatVase);
+        transform1.translation = {-.5f, .5f, 0.f};
+        transform1.rotation.z = 0.f;
+        transform1.scale = {3.f, 1.5, 3.f};
+    
 
+    
+        Entity smoothVase = gCoordinator.CreateEntity();
+        
+        gCoordinator.AddComponent(smoothVase, Model{LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\smooth_vase.obj")});
+
+        Transform &transform2 = gCoordinator.GetComponent<Transform>(smoothVase);
+        transform2.translation = {.5f, .5f, 0.f};
+        transform2.rotation.z = 0.f;
+        transform2.scale = glm::vec3(3.f);
+    
+
+    
+        Entity floor = gCoordinator.CreateEntity();
+        
+        gCoordinator.AddComponent(floor, Model{LveModel::CreateModelFromFile(lveDevice, "C:\\Users\\simde\\RepositoryGit\\vulkan\\models\\quad.obj")});
+
+        Transform &transform3 = gCoordinator.GetComponent<Transform>(floor);
+        transform3.translation = {0.f, .5f, 0.f};
+        transform3.scale = {3.f, 1.f, 3.f};
+
+
+        
         std::vector<glm::vec3> lightColors{
             {1.f, .1f, .1f},
             {.1f, .1f, 1.f},
@@ -164,16 +190,23 @@ namespace lve
 
         for (int i = 0; i < lightColors.size(); i++)
         {
-            auto pointLight = LveGameObject::makePointLight(0.2f);
+            // crée l'entity et ajoute le pointLight component
+            Entity pointLightEntity = gCoordinator.CreateEntity();
+            gCoordinator.AddComponent(pointLightEntity, PointLight{});
+            
+            // récupère les components
+            Transform &transform = gCoordinator.GetComponent<Transform>(pointLightEntity);
+            PointLight &pointLight = gCoordinator.GetComponent<PointLight>(pointLightEntity);
+            
+            pointLight.lightIntensity = 0.2f;
             pointLight.color = lightColors[i];
+
             auto rotateLight =  
                 glm::rotate(glm::mat4(1.f), 
                 (i * glm::two_pi<float>()) / lightColors.size(), 
                 {0.f, -1.f, 0.f});
 
-            pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-            gameObjects.emplace(pointLight.GetId(), std::move(pointLight));
-
+            transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
         }
     }
 }

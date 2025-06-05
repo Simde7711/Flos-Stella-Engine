@@ -6,6 +6,8 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include <mutex>
 
 namespace lve {
 
@@ -53,12 +55,7 @@ class LveDevice {
       const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
   // Buffer Helper Functions
-  void createBuffer(
-      VkDeviceSize size,
-      VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags properties,
-      VkBuffer &buffer,
-      VkDeviceMemory &bufferMemory);
+  void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
   VkCommandBuffer beginSingleTimeCommands();
   void endSingleTimeCommands(VkCommandBuffer commandBuffer);
   void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
@@ -102,8 +99,18 @@ class LveDevice {
   VkQueue graphicsQueue_;
   VkQueue presentQueue_;
 
+  std::unordered_set<VkBuffer> trackedBuffers{};
+  std::unordered_set<VkDeviceMemory> trackedMemory{};
+  std::mutex trackMutex;
+  void TrackBuffer(VkBuffer buffer);
+  void UntrackBuffer(VkBuffer buffer);
+  void TrackMemory(VkDeviceMemory memory);
+  void UntrackMemory(VkDeviceMemory memory); 
+
   const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
   const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  friend class LveBuffer;
 };
 
 }

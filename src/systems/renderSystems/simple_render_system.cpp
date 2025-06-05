@@ -1,4 +1,4 @@
-#include "systems/simple_render_system.hpp"
+#include "systems/renderSystems/simple_render_system.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -72,20 +72,23 @@ namespace lve
 
         vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-        for (auto &kv : frameInfo.gameObjects)
+        for (auto const &entity : gCoordinator.mEntities)
         {
-            auto &obj = kv.second;
-            if (obj.model == nullptr) continue;
+            Transform &transform = gCoordinator.GetComponent<Transform>(entity);
+
+            if (!gCoordinator.HasComponent<Model>(entity)) continue;
+
+            Model &model = gCoordinator.GetComponent<Model>(entity);
+            if (model.model == nullptr) continue;
 
             SinglePushConstantData push{};
-            push.modelMatrix = obj.transform.mat4();
-            push.normalMatrix = obj.transform.NormalMatrix();
+            push.modelMatrix = transform.mat4();
+            push.normalMatrix = transform.NormalMatrix();
 
             vkCmdPushConstants(frameInfo.commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SinglePushConstantData), &push);
 
-            obj.model->Bind(frameInfo.commandBuffer);
-            obj.model->Draw(frameInfo.commandBuffer);
-
+            model.model->Bind(frameInfo.commandBuffer);
+            model.model->Draw(frameInfo.commandBuffer);
         }
     }
 }
