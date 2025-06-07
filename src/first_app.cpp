@@ -87,7 +87,7 @@ namespace lve
 
         // créer l'entity de la caméra
         Entity entityCamera = gCoordinator.CreateEntity();
-        gCoordinator.GetComponent<Transform>(entityCamera).translation.z = -2.5f;;
+        gCoordinator.GetComponent<Transform>(entityCamera).translation.z = -2.5f;
 
         KeyboardMovementController cameraController{};
 

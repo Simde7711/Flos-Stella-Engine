@@ -1,5 +1,5 @@
 #### truc a changer dans le futur après les tuto:
 
-- les render systems pour mes besoins et les shaders
+- faire des shaders plus dynamics
 
-- faire que le gameObjet soit plus avec entity component system
+- les render systems pour mes besoins et les shaders

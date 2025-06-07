@@ -1,7 +1,9 @@
-C:\VulkanSDK\1.4.309.0\Bin\glslc.exe shaders\simple_shader.vert -o shaders\simple_shader.vert.spv
-C:\VulkanSDK\1.4.309.0\Bin\glslc.exe shaders\point_light.vert -o shaders\point_light.vert.spv
+@echo off
+set GLSLC="C:\VulkanSDK\1.4.309.0\Bin\glslc.exe"
 
-C:\VulkanSDK\1.4.309.0\Bin\glslc.exe shaders\simple_shader.frag -o shaders\simple_shader.frag.spv
-C:\VulkanSDK\1.4.309.0\Bin\glslc.exe shaders\point_light.frag -o shaders\point_light.frag.spv
+%GLSLC% -DVERTEX_SHADER -fshader-stage=vert shaders\simple_shader.glsl -o shaders\simple_shader.vert.spv
 
+%GLSLC% -DFRAGMENT_SHADER -fshader-stage=frag shaders\simple_shader.glsl -o shaders\simple_shader.frag.spv
+
+echo Compilation done.
 pause
