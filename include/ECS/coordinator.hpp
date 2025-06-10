@@ -114,6 +114,7 @@ namespace lve
                 RegisterComponent<Transform>();
                 RegisterComponent<Model>();
                 RegisterComponent<PointLight>();
+                RegisterComponent<Shader>();
             }
     };
 

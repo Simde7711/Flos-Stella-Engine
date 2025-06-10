@@ -32,5 +32,9 @@ namespace lve
             LveDevice lveDevice{lveWindow};
             LveRenderer lveRenderer{lveWindow, lveDevice};
             std::unique_ptr<LveDescriptorPool> globalPool{};
+
+            // TODO: temporaire
+            std::unique_ptr<LveDescriptorSetLayout> globalSetLayout;
+        
     };
 }

@@ -5,8 +5,9 @@
 #include "lve_device.hpp"
 #include "lve_frame_info.hpp"
 #include "ECS/coordinator.hpp"
+#include "shaderManager.hpp"
 
-
+// std
 #include <vector>
 #include <memory>
 
@@ -15,7 +16,7 @@ namespace lve
     class SimpleRenderSystem
     {
         public:
-            SimpleRenderSystem(LveDevice &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+            SimpleRenderSystem(LveDevice &device);
             ~SimpleRenderSystem();
 
             SimpleRenderSystem(const LveWindow &) = delete;
@@ -23,12 +24,6 @@ namespace lve
 
             void RenderGameObjects(FrameInfo &frameInfo);
         private:
-            void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
-            void CreatePipeline(VkRenderPass renderPass);
-
             LveDevice &lveDevice;
-
-            std::unique_ptr<LvePipeline> lvePipeline;
-            VkPipelineLayout pipelineLayout;
     };
 }

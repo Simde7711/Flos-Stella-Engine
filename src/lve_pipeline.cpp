@@ -16,10 +16,27 @@ namespace lve
 
     LvePipeline::~LvePipeline()
     {
-        vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
-        vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
-        vkDestroyPipeline(lveDevice.device(), graphicPipeline, nullptr);
+        if (lveDevice.device() != VK_NULL_HANDLE) 
+        {
+            if (graphicPipeline != VK_NULL_HANDLE) 
+            {
+                vkDestroyPipeline(lveDevice.device(), graphicPipeline, nullptr);
+            }
 
+            if (vertShaderModule != VK_NULL_HANDLE) 
+            {
+                vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
+            }
+
+            if (fragShaderModule != VK_NULL_HANDLE) 
+            {
+                vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
+            }
+        }
+        else
+        {
+            std::cout << "[LvePipeline] Le device a déjà été détruit" << '\n';
+        }
     }
 
     std::vector<char> LvePipeline::ReadFile(const std::string& filepath)

@@ -28,7 +28,21 @@ namespace lve
         VkPipelineLayout pipelineLayout = nullptr;
         VkRenderPass renderPass = nullptr;
         uint32_t subpass = 0;
-      };
+
+        // bool operator==(const PipelineConfigInfo& other) const 
+        // {
+        //     return inputAssemblyInfo.topology == other.inputAssemblyInfo.topology &&
+        //         rasterizationInfo.cullMode == other.rasterizationInfo.cullMode &&
+        //         rasterizationInfo.polygonMode == other.rasterizationInfo.polygonMode &&
+        //         multisampleInfo.rasterizationSamples == other.multisampleInfo.rasterizationSamples &&
+        //         colorBlendAttachment.blendEnable == other.colorBlendAttachment.blendEnable &&
+        //         depthStencilInfo.depthTestEnable == other.depthStencilInfo.depthTestEnable &&
+        //         depthStencilInfo.depthWriteEnable == other.depthStencilInfo.depthWriteEnable &&
+        //         pipelineLayout == other.pipelineLayout &&
+        //         renderPass == other.renderPass &&
+        //         subpass == other.subpass;
+        // }
+    };
 
     class LvePipeline
     {

@@ -1,5 +1,8 @@
 #include "lve_renderer.hpp"
 
+#include "lve_renderPassManager.hpp"
+#include "shaderManager.hpp"
+
 // std
 #include <stdexcept>
 #include <array>
@@ -42,9 +45,9 @@ namespace lve
             {
                 throw std::runtime_error("swap chains image(or depth) format has changed");
             }
-        }
 
-        // we will come
+            shaderManager.RecreatePipelines();
+        }
     }
 
     void LveRenderer::CreateCommandBuffers()
@@ -139,7 +142,7 @@ namespace lve
         
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo.renderPass = lveSwapChain->getRenderPass();
+        renderPassInfo.renderPass = lveSwapChain->GetRenderPass(RenderPassType::Forward);
         renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
 
         renderPassInfo.renderArea.offset = {0, 0};
