@@ -16,18 +16,18 @@
 namespace std
 {
     template<>
-    struct hash<lve::LveModel::Vertex> 
+    struct hash<FS::LveModel::Vertex> 
     {
-        size_t operator()( lve::LveModel::Vertex const &vertex) const 
+        size_t operator()( FS::LveModel::Vertex const &vertex) const 
         {
             size_t seed = 0;
-            lve::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+            FS::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
             return seed;
         }
     };
 }
 
-namespace lve
+namespace FS
 {
     LveModel::LveModel(LveDevice &device, const LveModel::Builder &builder) : lveDevice{device}
     {

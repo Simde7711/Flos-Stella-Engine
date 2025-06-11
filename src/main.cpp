@@ -7,7 +7,7 @@
 
 int main()
 {
-    lve::FirstApp app{};
+    FS::FirstApp app{};
 
     try
     {

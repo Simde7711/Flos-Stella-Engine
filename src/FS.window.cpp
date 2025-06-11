@@ -3,7 +3,7 @@
 // std
 #include <stdexcept>
 
-namespace lve
+namespace FS
 {
     LveWindow::LveWindow(int _w, int _h, std::string _windowName) : width(_w), height(_h), windowName(_windowName)
     {

@@ -2,7 +2,7 @@
  
 #include "FS.device.hpp"
  
-namespace lve 
+namespace FS 
 {
  
     class LveBuffer 

@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
-namespace lve
+namespace FS
 {
     class LveWindow
     {

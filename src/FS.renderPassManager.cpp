@@ -1,6 +1,6 @@
 #include "FS.renderPassManager.hpp"
 
-namespace lve
+namespace FS
 {
     RenderPassManager::RenderPassManager(LveDevice &_device) : device{_device}
     {

@@ -3,7 +3,7 @@
 #include "FS.frameInfo.hpp"
 #include "ECS/FS.coordinator.hpp"
 
-namespace lve
+namespace FS
 {
     class PointLightSystem
     {

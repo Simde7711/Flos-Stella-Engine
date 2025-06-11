@@ -5,7 +5,7 @@
 #include <array>
 #include <cassert>
 
-namespace lve
+namespace FS
 {
     SimpleRenderSystem::SimpleRenderSystem(LveDevice &device) : lveDevice{device}
     {

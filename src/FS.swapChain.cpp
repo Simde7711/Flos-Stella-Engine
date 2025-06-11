@@ -10,7 +10,7 @@
 #include <set>
 #include <stdexcept>
 
-namespace lve {
+namespace FS {
 
 LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {

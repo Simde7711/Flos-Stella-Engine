@@ -7,7 +7,7 @@
 #include <cassert>
 #include <queue>
 
-namespace lve
+namespace FS
 {
     class EntityManager
     {

@@ -4,7 +4,7 @@
 #include "ECS/components/FS.components.hpp"
 #include "FS.window.hpp"
 
-namespace lve
+namespace FS
 {
     class KeyboardMovementController
     {

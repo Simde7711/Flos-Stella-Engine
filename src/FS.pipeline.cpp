@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <cassert>
 
-namespace lve
+namespace FS
 {
     LvePipeline::LvePipeline(LveDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo) : lveDevice{device}
     {

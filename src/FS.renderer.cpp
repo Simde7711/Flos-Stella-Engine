@@ -8,7 +8,7 @@
 #include <array>
 #include <cassert>
 
-namespace lve
+namespace FS
 {
     LveRenderer::LveRenderer(LveWindow &window, LveDevice &device) : lveWindow{window}, lveDevice{device}
     {

@@ -4,7 +4,7 @@
 
 #include <vulkan/vulkan.h>
 
-namespace lve
+namespace FS
 {
     #define MAX_LIGHTS 10
     

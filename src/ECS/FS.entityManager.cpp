@@ -1,6 +1,6 @@
 #include "ECS/FS.entityManager.hpp"
 
-namespace lve
+namespace FS
 {
     EntityManager::EntityManager()
     {

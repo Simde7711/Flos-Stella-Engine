@@ -12,7 +12,7 @@
  #include <cstring>
  #include <iostream>
   
- namespace lve {
+ namespace FS {
   
  /**
   * Returns the minimum instance size required to be compatible with devices minOffsetAlignment

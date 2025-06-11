@@ -2,7 +2,7 @@
 
 #include "FS.shaderManager.hpp"
 
-namespace lve
+namespace FS
 {
     struct Shader
     {
