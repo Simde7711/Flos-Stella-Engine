@@ -53,7 +53,7 @@ namespace FS
         int modelCount = 0;
         for (Entity entity : gCoordinator.mEntities) 
         {
-            if (gCoordinator.HasComponent<Model>(entity)) {
+            if (gCoordinator.HasComponent<Mesh>(entity)) {
                 // std::cout << "[DEBUG] Entity " << entity << " has Model component\n";
                 ++modelCount;
             }
@@ -89,7 +89,7 @@ namespace FS
         }
         
         // render systems
-        SimpleRenderSystem simpleRenderSystem{lveDevice};
+        MeshRenderSystem meshRenderSystem{lveDevice};
        
         // component system
         PointLightSystem pointLightSystem{};
@@ -146,7 +146,7 @@ namespace FS
                 lveRenderer.BeginSwapChainRenderPass(commandBuffer);
 
                 // order here matters
-                simpleRenderSystem.RenderGameObjects(frameInfo);
+                meshRenderSystem.RenderGameObjects(frameInfo);
 
                 lveRenderer.EndSwapChainRenderPass(commandBuffer);
                 lveRenderer.EndFrame();
@@ -167,7 +167,7 @@ namespace FS
             Entity flatVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(flatVase, Model{LveModel::CreateModelFromFile(lveDevice, "../models/flat_vase.obj")});
+            gCoordinator.AddComponent(flatVase, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/flat_vase.obj")});
 
             // set le transform
             Transform &transform1 = gCoordinator.GetComponent<Transform>(flatVase);
@@ -190,7 +190,7 @@ namespace FS
             Entity smoothVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(smoothVase, Model{LveModel::CreateModelFromFile(lveDevice, "../models/smooth_vase.obj")});
+            gCoordinator.AddComponent(smoothVase, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/smooth_vase.obj")});
 
             // set le transform
             Transform &transform2 = gCoordinator.GetComponent<Transform>(smoothVase);
@@ -213,7 +213,7 @@ namespace FS
             Entity floor = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(floor, Model{LveModel::CreateModelFromFile(lveDevice, "../models/quad.obj")});
+            gCoordinator.AddComponent(floor, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/quad.obj")});
 
             // set le transform
             Transform &transform3 = gCoordinator.GetComponent<Transform>(floor);

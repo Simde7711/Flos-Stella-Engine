@@ -13,28 +13,28 @@ namespace FS
         // Possibly more in the future.
     };
 
-    struct Model
+    struct Mesh
     {
         std::unique_ptr<LveModel> model;
         RenderType renderType;
 
-        Model() = default;
-        Model(std::unique_ptr<LveModel> _model) : model(std::move(_model))
+        Mesh() = default;
+        Mesh(std::unique_ptr<LveModel> _model) : model(std::move(_model))
         {
         
         }
 
-        ~Model()
+        ~Mesh()
         {
             std::cout << "[Model] Destroyed (ptr=" << model.get() << ") \n";
         }
 
         // move support
-        Model(Model&&) noexcept = default;
-        Model& operator=(Model&&) noexcept = default;
+        Mesh(Mesh&&) noexcept = default;
+        Mesh& operator=(Mesh&&) noexcept = default;
 
         // disallow copies
-        Model(const Model&) = delete;
-        Model& operator=(const Model&) = delete;
+        Mesh(const Mesh&) = delete;
+        Mesh& operator=(const Mesh&) = delete;
     };
 }

@@ -113,7 +113,7 @@ namespace FS
             {
                 // Register all engine components
                 RegisterComponent<Transform>();
-                RegisterComponent<Model>();
+                RegisterComponent<Mesh>();
                 RegisterComponent<PointLight>();
                 RegisterComponent<Shader>();
             }

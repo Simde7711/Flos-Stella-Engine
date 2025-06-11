@@ -13,14 +13,14 @@
 
 namespace FS
 {
-    class SimpleRenderSystem
+    class MeshRenderSystem
     {
         public:
-            SimpleRenderSystem(LveDevice &device);
-            ~SimpleRenderSystem();
+            MeshRenderSystem(LveDevice &device);
+            ~MeshRenderSystem();
 
-            SimpleRenderSystem(const LveWindow &) = delete;
-            SimpleRenderSystem &operator = (const LveWindow &) = delete;
+            MeshRenderSystem(const LveWindow &) = delete;
+            MeshRenderSystem &operator = (const LveWindow &) = delete;
 
             void RenderGameObjects(FrameInfo &frameInfo);
         private:
