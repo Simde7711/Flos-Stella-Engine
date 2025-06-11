@@ -5,7 +5,7 @@
 #include <array>
 #include <cassert>
 
-namespace FS
+namespace fs
 {
     FsMeshRenderSystem::FsMeshRenderSystem(FsDevice &_device) : device{_device}
     {

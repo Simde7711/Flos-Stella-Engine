@@ -4,7 +4,7 @@
 #include <cassert>
 #include <stdexcept>
  
-namespace FS {
+namespace fs {
  
 // *************** Descriptor Set Layout Builder *********************
  

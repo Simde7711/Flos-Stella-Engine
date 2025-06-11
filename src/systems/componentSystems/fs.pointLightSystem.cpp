@@ -1,6 +1,6 @@
 #include "systems/componentSystems/fs.pointLightSystem.hpp"
 
-namespace FS
+namespace fs
 {
     void FsPointLightSystem::Update(FrameInfo &frameInfo, GlobalUbo &globalUbo)
     {

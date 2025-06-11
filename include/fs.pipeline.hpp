@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace FS
+namespace fs
 {
     struct PipelineConfigInfo 
     {

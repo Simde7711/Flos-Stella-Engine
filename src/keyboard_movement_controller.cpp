@@ -1,7 +1,7 @@
 #include "keyboard_movement_controller.hpp"
 #include "gtc/quaternion.hpp"
 
-namespace FS
+namespace fs
 {
     void KeyboardMovementController::MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform &transform)
     {

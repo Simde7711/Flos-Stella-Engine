@@ -16,18 +16,18 @@
 namespace std
 {
     template<>
-    struct hash<FS::FsModel::Vertex> 
+    struct hash<fs::FsModel::Vertex> 
     {
-        size_t operator()( FS::FsModel::Vertex const &vertex) const 
+        size_t operator()( fs::FsModel::Vertex const &vertex) const 
         {
             size_t seed = 0;
-            FS::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+            fs::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
             return seed;
         }
     };
 }
 
-namespace FS
+namespace fs
 {
     FsModel::FsModel(FsDevice &device, const FsModel::Builder &builder) : device{device}
     {

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <cassert>
 
-namespace FS
+namespace fs
 {
     FsPipeline::FsPipeline(FsDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo) : device{device}
     {

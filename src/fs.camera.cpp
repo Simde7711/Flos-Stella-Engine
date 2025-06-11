@@ -4,7 +4,7 @@
 #include <cassert>
 #include <limits>
 
-namespace FS
+namespace fs
 {
     void FsCamera::SetOrthographicProjection(float left, float right, float top, float bottom, float near, float far) 
     {  

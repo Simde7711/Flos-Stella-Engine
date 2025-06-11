@@ -3,7 +3,7 @@
 // libs
 #include <gtc/matrix_transform.hpp>
 
-namespace FS
+namespace fs
 {
     struct Transform
     {

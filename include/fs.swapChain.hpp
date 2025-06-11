@@ -10,7 +10,7 @@
 #include <vector>
 #include <memory>
 
-namespace FS 
+namespace fs 
 {
   enum class RenderPassType;
   class FsRenderPassManager;

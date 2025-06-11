@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-namespace FS
+namespace fs
 {
     class FsModel
     {

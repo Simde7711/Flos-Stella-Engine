@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <stdexcept>
 
-namespace FS
+namespace fs
 {
     enum class RenderPassType 
     {

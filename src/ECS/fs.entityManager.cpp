@@ -1,6 +1,6 @@
 #include "ECS/fs.entityManager.hpp"
 
-namespace FS
+namespace fs
 {
     FsEntityManager::FsEntityManager()
     {

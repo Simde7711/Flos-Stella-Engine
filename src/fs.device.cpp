@@ -6,7 +6,7 @@
 #include <set>
 #include <unordered_set>
 
-namespace FS {
+namespace fs {
 
 // local callback functions
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

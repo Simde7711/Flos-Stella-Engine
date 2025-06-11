@@ -9,7 +9,7 @@
 #include <vector>
 #include <memory>
 
-namespace FS
+namespace fs
 {
     class FsRenderer
     {

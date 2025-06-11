@@ -9,7 +9,7 @@
 #include <unordered_set>
 #include <iostream>
 
-namespace FS
+namespace fs
 {
     class FsCoordinator
     {

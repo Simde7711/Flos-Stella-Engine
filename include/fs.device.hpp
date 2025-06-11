@@ -9,7 +9,7 @@
 #include <unordered_set>
 #include <mutex>
 
-namespace FS {
+namespace fs {
 
 struct SwapChainSupportDetails {
   VkSurfaceCapabilitiesKHR capabilities;

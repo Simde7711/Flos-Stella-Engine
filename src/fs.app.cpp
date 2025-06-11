@@ -20,7 +20,7 @@
 #include <array>
 #include <cassert>
 
-namespace FS
+namespace fs
 {
     FsApp::FsApp()
     {

@@ -3,7 +3,7 @@
 // libs
 #include "glm.hpp"
 
-namespace FS
+namespace fs
 {
     struct PointLight
     {

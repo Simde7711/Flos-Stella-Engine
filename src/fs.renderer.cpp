@@ -8,7 +8,7 @@
 #include <array>
 #include <cassert>
 
-namespace FS
+namespace fs
 {
     FsRenderer::FsRenderer(FsWindow &window, FsDevice &device) : window{window}, device{device}
     {

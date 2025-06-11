@@ -1,6 +1,6 @@
 #include "ECS/fs.coordinator.hpp"
 
-namespace FS
+namespace fs
 {
     // unique instance de gCoordinator
     FsCoordinator gCoordinator;

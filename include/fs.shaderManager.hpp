@@ -16,7 +16,7 @@
 #include <string>
 #include <functional>
 
-namespace FS
+namespace fs
 {
     struct SinglePushConstantData
     {

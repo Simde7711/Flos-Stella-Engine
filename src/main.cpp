@@ -7,7 +7,7 @@
 
 int main()
 {
-    FS::FsApp app{};
+    fs::FsApp app{};
 
     try
     {

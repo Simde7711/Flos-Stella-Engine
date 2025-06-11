@@ -10,7 +10,7 @@
 #include <set>
 #include <stdexcept>
 
-namespace FS {
+namespace fs {
 
 FsSwapChain::FsSwapChain(FsDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {

@@ -9,7 +9,7 @@
 #include <optional>
 #include <iostream>
 
-namespace FS
+namespace fs
 {
     class IComponentArray
     {

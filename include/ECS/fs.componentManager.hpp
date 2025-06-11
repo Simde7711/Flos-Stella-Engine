@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <iostream>
 
-namespace FS
+namespace fs
 {
     class FsComponentManager
     {

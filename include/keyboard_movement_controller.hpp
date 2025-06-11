@@ -3,7 +3,7 @@
 #include "ECS/components/fs.components.hpp"
 #include "fs.window.hpp"
 
-namespace FS
+namespace fs
 {
     class KeyboardMovementController
     {

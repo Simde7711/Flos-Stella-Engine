@@ -1,6 +1,6 @@
 #include "fs.renderPassManager.hpp"
 
-namespace FS
+namespace fs
 {
     FsRenderPassManager::FsRenderPassManager(FsDevice &_device) : device{_device}
     {

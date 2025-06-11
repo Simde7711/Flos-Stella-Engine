@@ -7,7 +7,7 @@
 #include <cassert>
 #include <queue>
 
-namespace FS
+namespace fs
 {
     class FsEntityManager
     {

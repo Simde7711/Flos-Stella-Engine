@@ -14,7 +14,7 @@
 //     std::cout << "Le cache de shader contient: " << nombre << '\n';
 // }
 
-namespace FS
+namespace fs
 {
     // unique instance de shaderManager
     FsShaderManager shaderManager;

@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
  
-namespace FS {
+namespace fs {
  
 class FsDescriptorSetLayout {
  public:

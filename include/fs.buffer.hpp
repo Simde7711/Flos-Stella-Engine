@@ -2,7 +2,7 @@
  
 #include "fs.device.hpp"
  
-namespace FS 
+namespace fs 
 {
  
     class FsBuffer 

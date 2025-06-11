@@ -4,7 +4,7 @@
 #include <memory>
 #include <iostream>
 
-namespace FS 
+namespace fs 
 {
     enum class RenderType 
     {
