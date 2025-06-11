@@ -1,5 +1,5 @@
 # Flōs Stella Engine
-![title](images_Flos_Stella_1.png)
+![Project Logo](images_readMe/logo_Flos_Stella_1.png)
 
 #### truc a changer dans le futur après les tutos:
 
