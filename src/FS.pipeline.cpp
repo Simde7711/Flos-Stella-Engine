@@ -1,5 +1,5 @@
-#include "FS.pipeline.hpp"
-#include "FS.model.hpp"
+#include "fs.pipeline.hpp"
+#include "fs.model.hpp"
 
 // std
 #include <iostream>
@@ -9,37 +9,37 @@
 
 namespace FS
 {
-    LvePipeline::LvePipeline(LveDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo) : lveDevice{device}
+    FsPipeline::FsPipeline(FsDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo) : device{device}
     {
         CreateGraphicPipeline(vertFilepath, fragFilepath, configInfo);
     }
 
-    LvePipeline::~LvePipeline()
+    FsPipeline::~FsPipeline()
     {
-        if (lveDevice.device() != VK_NULL_HANDLE) 
+        if (device.device() != VK_NULL_HANDLE) 
         {
             if (graphicPipeline != VK_NULL_HANDLE) 
             {
-                vkDestroyPipeline(lveDevice.device(), graphicPipeline, nullptr);
+                vkDestroyPipeline(device.device(), graphicPipeline, nullptr);
             }
 
             if (vertShaderModule != VK_NULL_HANDLE) 
             {
-                vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
+                vkDestroyShaderModule(device.device(), vertShaderModule, nullptr);
             }
 
             if (fragShaderModule != VK_NULL_HANDLE) 
             {
-                vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
+                vkDestroyShaderModule(device.device(), fragShaderModule, nullptr);
             }
         }
         else
         {
-            std::cout << "[LvePipeline] Le device a déjà été détruit" << '\n';
+            std::cout << "[FsPipeline] Le device a déjà été détruit" << '\n';
         }
     }
 
-    std::vector<char> LvePipeline::ReadFile(const std::string& filepath)
+    std::vector<char> FsPipeline::ReadFile(const std::string& filepath)
     {
         std::ifstream file(filepath, std::ios::ate | std::ios::binary);
     
@@ -60,7 +60,7 @@ namespace FS
     }
 
 
-    void LvePipeline::CreateGraphicPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo)
+    void FsPipeline::CreateGraphicPipeline(const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo)
     {
         assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline:: no pipelineLayout provided in configInfo");
         assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline:: no renderPass provided in configInfo");
@@ -118,31 +118,31 @@ namespace FS
         pipelineInfo.basePipelineIndex = -1;;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(lveDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicPipeline) != VK_SUCCESS)
+        if (vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicPipeline) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create graphics pipeline");
         }
     }
 
-    void LvePipeline::CreateShaderModule(const std::vector<char> &code, VkShaderModule *shaderModule)
+    void FsPipeline::CreateShaderModule(const std::vector<char> &code, VkShaderModule *shaderModule)
     {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = code.size();
         createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-        if (vkCreateShaderModule(lveDevice.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
+        if (vkCreateShaderModule(device.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create shader module");
         }
     }
 
-    void LvePipeline::Bind(VkCommandBuffer commandBuffer)
+    void FsPipeline::Bind(VkCommandBuffer commandBuffer)
     {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipeline);
     }
 
-    void LvePipeline::defaultPipelineConfigInfo(PipelineConfigInfo &configInfo)
+    void FsPipeline::defaultPipelineConfigInfo(PipelineConfigInfo &configInfo)
     {
         configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
         configInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -212,11 +212,11 @@ namespace FS
         configInfo.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
         configInfo.dynamicStateInfo.flags = 0;
 
-        configInfo.bindingDescriptions = LveModel::Vertex::GetBindingDescriptions();
-        configInfo.attributeDescriptions = LveModel::Vertex::GetAttributeDescriptions();
+        configInfo.bindingDescriptions = FsModel::Vertex::GetBindingDescriptions();
+        configInfo.attributeDescriptions = FsModel::Vertex::GetAttributeDescriptions();
     }
 
-    void LvePipeline::EnableAlphaBlending(PipelineConfigInfo &configInfo)
+    void FsPipeline::EnableAlphaBlending(PipelineConfigInfo &configInfo)
     {
         configInfo.colorBlendAttachment.colorWriteMask =
             VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |

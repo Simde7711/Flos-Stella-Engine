@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/FS.types.hpp"
+#include "ECS/fs.types.hpp"
 
 // std
 #include <array>
@@ -9,10 +9,10 @@
 
 namespace FS
 {
-    class EntityManager
+    class FsEntityManager
     {
         public: 
-        EntityManager();
+        FsEntityManager();
 
         Entity CreateEntity();
 

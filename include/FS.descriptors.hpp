@@ -1,6 +1,6 @@
 #pragma once
  
-#include "FS.device.hpp"
+#include "fs.device.hpp"
  
 // std
 #include <memory>
@@ -9,66 +9,66 @@
  
 namespace FS {
  
-class LveDescriptorSetLayout {
+class FsDescriptorSetLayout {
  public:
   class Builder {
    public:
-    Builder(LveDevice &lveDevice) : lveDevice{lveDevice} {}
+    Builder(FsDevice &device) : device{device} {}
  
     Builder &addBinding(
         uint32_t binding,
         VkDescriptorType descriptorType,
         VkShaderStageFlags stageFlags,
         uint32_t count = 1);
-    std::unique_ptr<LveDescriptorSetLayout> build() const;
+    std::unique_ptr<FsDescriptorSetLayout> build() const;
  
    private:
-    LveDevice &lveDevice;
+    FsDevice &device;
     std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings{};
   };
  
-  LveDescriptorSetLayout(
-      LveDevice &lveDevice, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
-  ~LveDescriptorSetLayout();
-  LveDescriptorSetLayout(const LveDescriptorSetLayout &) = delete;
-  LveDescriptorSetLayout &operator=(const LveDescriptorSetLayout &) = delete;
+  FsDescriptorSetLayout(
+      FsDevice &device, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings);
+  ~FsDescriptorSetLayout();
+  FsDescriptorSetLayout(const FsDescriptorSetLayout &) = delete;
+  FsDescriptorSetLayout &operator=(const FsDescriptorSetLayout &) = delete;
  
   VkDescriptorSetLayout getDescriptorSetLayout() const { return descriptorSetLayout; }
  
  private:
-  LveDevice &lveDevice;
+  FsDevice &device;
   VkDescriptorSetLayout descriptorSetLayout;
   std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings;
  
-  friend class LveDescriptorWriter;
+  friend class FsDescriptorWriter;
 };
  
-class LveDescriptorPool {
+class FsDescriptorPool {
  public:
   class Builder {
    public:
-    Builder(LveDevice &lveDevice) : lveDevice{lveDevice} {}
+    Builder(FsDevice &device) : device{device} {}
  
     Builder &addPoolSize(VkDescriptorType descriptorType, uint32_t count);
     Builder &setPoolFlags(VkDescriptorPoolCreateFlags flags);
     Builder &setMaxSets(uint32_t count);
-    std::unique_ptr<LveDescriptorPool> build() const;
+    std::unique_ptr<FsDescriptorPool> build() const;
  
    private:
-    LveDevice &lveDevice;
+    FsDevice &device;
     std::vector<VkDescriptorPoolSize> poolSizes{};
     uint32_t maxSets = 1000;
     VkDescriptorPoolCreateFlags poolFlags = 0;
   };
  
-  LveDescriptorPool(
-      LveDevice &lveDevice,
+  FsDescriptorPool(
+      FsDevice &device,
       uint32_t maxSets,
       VkDescriptorPoolCreateFlags poolFlags,
       const std::vector<VkDescriptorPoolSize> &poolSizes);
-  ~LveDescriptorPool();
-  LveDescriptorPool(const LveDescriptorPool &) = delete;
-  LveDescriptorPool &operator=(const LveDescriptorPool &) = delete;
+  ~FsDescriptorPool();
+  FsDescriptorPool(const FsDescriptorPool &) = delete;
+  FsDescriptorPool &operator=(const FsDescriptorPool &) = delete;
  
   bool allocateDescriptor(
       const VkDescriptorSetLayout descriptorSetLayout, VkDescriptorSet &descriptor) const;
@@ -78,25 +78,25 @@ class LveDescriptorPool {
   void resetPool();
  
  private:
-  LveDevice &lveDevice;
+  FsDevice &device;
   VkDescriptorPool descriptorPool;
  
-  friend class LveDescriptorWriter;
+  friend class FsDescriptorWriter;
 };
  
-class LveDescriptorWriter {
+class FsDescriptorWriter {
  public:
-  LveDescriptorWriter(LveDescriptorSetLayout &setLayout, LveDescriptorPool &pool);
+  FsDescriptorWriter(FsDescriptorSetLayout &setLayout, FsDescriptorPool &pool);
  
-  LveDescriptorWriter &writeBuffer(uint32_t binding, VkDescriptorBufferInfo *bufferInfo);
-  LveDescriptorWriter &writeImage(uint32_t binding, VkDescriptorImageInfo *imageInfo);
+  FsDescriptorWriter &writeBuffer(uint32_t binding, VkDescriptorBufferInfo *bufferInfo);
+  FsDescriptorWriter &writeImage(uint32_t binding, VkDescriptorImageInfo *imageInfo);
  
   bool build(VkDescriptorSet &set);
   void overwrite(VkDescriptorSet &set);
  
  private:
-  LveDescriptorSetLayout &setLayout;
-  LveDescriptorPool &pool;
+  FsDescriptorSetLayout &setLayout;
+  FsDescriptorPool &pool;
   std::vector<VkWriteDescriptorSet> writes;
 };
  

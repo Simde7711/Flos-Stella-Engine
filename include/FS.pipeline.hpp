@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.device.hpp"
+#include "fs.device.hpp"
 
 // std
 #include <string>
@@ -28,30 +28,16 @@ namespace FS
         VkPipelineLayout pipelineLayout = nullptr;
         VkRenderPass renderPass = nullptr;
         uint32_t subpass = 0;
-
-        // bool operator==(const PipelineConfigInfo& other) const 
-        // {
-        //     return inputAssemblyInfo.topology == other.inputAssemblyInfo.topology &&
-        //         rasterizationInfo.cullMode == other.rasterizationInfo.cullMode &&
-        //         rasterizationInfo.polygonMode == other.rasterizationInfo.polygonMode &&
-        //         multisampleInfo.rasterizationSamples == other.multisampleInfo.rasterizationSamples &&
-        //         colorBlendAttachment.blendEnable == other.colorBlendAttachment.blendEnable &&
-        //         depthStencilInfo.depthTestEnable == other.depthStencilInfo.depthTestEnable &&
-        //         depthStencilInfo.depthWriteEnable == other.depthStencilInfo.depthWriteEnable &&
-        //         pipelineLayout == other.pipelineLayout &&
-        //         renderPass == other.renderPass &&
-        //         subpass == other.subpass;
-        // }
     };
 
-    class LvePipeline
+    class FsPipeline
     {
         public:
-            LvePipeline(LveDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo);
-            ~LvePipeline();
+            FsPipeline(FsDevice &device, const std::string& vertFilepath, const std::string& fragFilepath, const PipelineConfigInfo &configInfo);
+            ~FsPipeline();
 
-            LvePipeline(const LvePipeline &) = delete;
-            LvePipeline &operator=(const LvePipeline &) = delete;
+            FsPipeline(const FsPipeline &) = delete;
+            FsPipeline &operator=(const FsPipeline &) = delete;
 
             void Bind(VkCommandBuffer commandBuffer);
             static void defaultPipelineConfigInfo(PipelineConfigInfo &configInfo);
@@ -63,7 +49,7 @@ namespace FS
     
             void CreateShaderModule(const std::vector<char> &code, VkShaderModule *shaderModule);
 
-            LveDevice &lveDevice;
+            FsDevice &device;
 
             VkPipeline graphicPipeline;
             VkShaderModule vertShaderModule;

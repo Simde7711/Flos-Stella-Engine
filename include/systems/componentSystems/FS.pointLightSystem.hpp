@@ -1,11 +1,11 @@
 #pragma once 
 
-#include "FS.frameInfo.hpp"
-#include "ECS/FS.coordinator.hpp"
+#include "fs.frameInfo.hpp"
+#include "ECS/fs.coordinator.hpp"
 
 namespace FS
 {
-    class PointLightSystem
+    class FsPointLightSystem
     {
         public:
             void Update(FrameInfo &frameInfo, GlobalUbo &globalUbo);

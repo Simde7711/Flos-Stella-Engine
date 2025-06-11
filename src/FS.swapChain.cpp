@@ -1,5 +1,5 @@
-#include "FS.swapChain.hpp"
-#include "FS.renderPassManager.hpp"
+#include "fs.swapChain.hpp"
+#include "fs.renderPassManager.hpp"
 
 // std
 #include <cstdlib>
@@ -12,12 +12,12 @@
 
 namespace FS {
 
-LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent)
+FsSwapChain::FsSwapChain(FsDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
   Init();
 }
 
-LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent, std::shared_ptr<LveSwapChain> previous)
+FsSwapChain::FsSwapChain(FsDevice &deviceRef, VkExtent2D extent, std::shared_ptr<FsSwapChain> previous)
     : device{deviceRef}, windowExtent{extent}, oldSwapChain{previous} {
   Init();
 
@@ -25,9 +25,9 @@ LveSwapChain::LveSwapChain(LveDevice &deviceRef, VkExtent2D extent, std::shared_
   oldSwapChain = nullptr;
 }
 
-void LveSwapChain::Init()
+void FsSwapChain::Init()
 {
-  renderPassManager = std::make_unique<RenderPassManager>(device);
+  renderPassManager = std::make_unique<FsRenderPassManager>(device);
   
   createSwapChain();
   createImageViews();
@@ -37,7 +37,7 @@ void LveSwapChain::Init()
   createSyncObjects();
 }
 
-LveSwapChain::~LveSwapChain() {
+FsSwapChain::~FsSwapChain() {
   for (auto imageView : swapChainImageViews) {
     vkDestroyImageView(device.device(), imageView, nullptr);
   }
@@ -66,12 +66,12 @@ LveSwapChain::~LveSwapChain() {
   }
 }
 
-  VkRenderPass LveSwapChain::GetRenderPass(const RenderPassType _type) 
+  VkRenderPass FsSwapChain::GetRenderPass(const RenderPassType _type) 
   { 
     return renderPassManager->GetRenderPass(_type); 
   }
 
-VkResult LveSwapChain::acquireNextImage(uint32_t *imageIndex) {
+VkResult FsSwapChain::acquireNextImage(uint32_t *imageIndex) {
   vkWaitForFences(
       device.device(),
       1,
@@ -90,7 +90,7 @@ VkResult LveSwapChain::acquireNextImage(uint32_t *imageIndex) {
   return result;
 }
 
-VkResult LveSwapChain::submitCommandBuffers(
+VkResult FsSwapChain::submitCommandBuffers(
     const VkCommandBuffer *buffers, uint32_t *imageIndex) {
   if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
     vkWaitForFences(device.device(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
@@ -138,7 +138,7 @@ VkResult LveSwapChain::submitCommandBuffers(
   return result;
 }
 
-void LveSwapChain::createSwapChain() {
+void FsSwapChain::createSwapChain() {
   SwapChainSupportDetails swapChainSupport = device.getSwapChainSupport();
 
   VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
@@ -199,7 +199,7 @@ void LveSwapChain::createSwapChain() {
   swapChainExtent = extent;
 }
 
-void LveSwapChain::createImageViews() {
+void FsSwapChain::createImageViews() {
   swapChainImageViews.resize(swapChainImages.size());
   for (size_t i = 0; i < swapChainImages.size(); i++) {
     VkImageViewCreateInfo viewInfo{};
@@ -220,7 +220,7 @@ void LveSwapChain::createImageViews() {
   }
 }
 
-void LveSwapChain::createFramebuffers() {
+void FsSwapChain::createFramebuffers() {
   swapChainFramebuffers.resize(imageCount());
   for (size_t i = 0; i < imageCount(); i++) {
     std::array<VkImageView, 2> attachments = {swapChainImageViews[i], depthImageViews[i]};
@@ -245,7 +245,7 @@ void LveSwapChain::createFramebuffers() {
   }
 }
 
-void LveSwapChain::createDepthResources() {
+void FsSwapChain::createDepthResources() {
   VkFormat depthFormat = findDepthFormat();
   swapChainDepthFormat = depthFormat;
   VkExtent2D swapChainExtent = getSwapChainExtent();
@@ -294,7 +294,7 @@ void LveSwapChain::createDepthResources() {
   }
 }
 
-void LveSwapChain::createSyncObjects() {
+void FsSwapChain::createSyncObjects() {
   imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
   renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
   inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
@@ -318,7 +318,7 @@ void LveSwapChain::createSyncObjects() {
   }
 }
 
-VkSurfaceFormatKHR LveSwapChain::chooseSwapSurfaceFormat(
+VkSurfaceFormatKHR FsSwapChain::chooseSwapSurfaceFormat(
     const std::vector<VkSurfaceFormatKHR> &availableFormats) {
   for (const auto &availableFormat : availableFormats) {
     if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
@@ -330,7 +330,7 @@ VkSurfaceFormatKHR LveSwapChain::chooseSwapSurfaceFormat(
   return availableFormats[0];
 }
 
-VkPresentModeKHR LveSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) 
+VkPresentModeKHR FsSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) 
 {
     //   for (const auto &availablePresentMode : availablePresentModes) {
     //     if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -350,7 +350,7 @@ VkPresentModeKHR LveSwapChain::chooseSwapPresentMode(const std::vector<VkPresent
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
-VkExtent2D LveSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
+VkExtent2D FsSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
   if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
     return capabilities.currentExtent;
   } else {
@@ -366,7 +366,7 @@ VkExtent2D LveSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabi
   }
 }
 
-VkFormat LveSwapChain::findDepthFormat() {
+VkFormat FsSwapChain::findDepthFormat() {
   return device.findSupportedFormat(
       {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
       VK_IMAGE_TILING_OPTIMAL,

@@ -1,8 +1,8 @@
-#include "ECS/FS.entityManager.hpp"
+#include "ECS/fs.entityManager.hpp"
 
 namespace FS
 {
-    EntityManager::EntityManager()
+    FsEntityManager::FsEntityManager()
     {
         for (Entity entity = 0; entity < MAX_ENTITIES; ++entity)
 		{
@@ -10,7 +10,7 @@ namespace FS
 		}
     }
 
-    Entity EntityManager::CreateEntity()
+    Entity FsEntityManager::CreateEntity()
     {
         assert(mLivingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
 
@@ -21,7 +21,7 @@ namespace FS
 		return id;
     }
 
-    void EntityManager::DestroyEntity(Entity entity)
+    void FsEntityManager::DestroyEntity(Entity entity)
     {
         assert(entity < MAX_ENTITIES && "Entity out of range.");
 
@@ -30,14 +30,14 @@ namespace FS
 		--mLivingEntityCount;
     }
 
-    void EntityManager::SetSignature(Entity entity, Signature signature)
+    void FsEntityManager::SetSignature(Entity entity, Signature signature)
     {
         assert(entity < MAX_ENTITIES && "Entity out of range.");
 
 		mSignatures[entity] = signature;
     }
 
-    Signature EntityManager::GetSignature(Entity entity)
+    Signature FsEntityManager::GetSignature(Entity entity)
     {
         assert(entity < MAX_ENTITIES && "Entity out of range.");
 

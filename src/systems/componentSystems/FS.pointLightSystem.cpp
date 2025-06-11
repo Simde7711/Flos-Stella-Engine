@@ -1,8 +1,8 @@
-#include "systems/componentSystems/FS.pointLightSystem.hpp"
+#include "systems/componentSystems/fs.pointLightSystem.hpp"
 
 namespace FS
 {
-    void PointLightSystem::Update(FrameInfo &frameInfo, GlobalUbo &globalUbo)
+    void FsPointLightSystem::Update(FrameInfo &frameInfo, GlobalUbo &globalUbo)
     {
         auto rotateLight =  
                 glm::rotate(glm::mat4(1.f), 

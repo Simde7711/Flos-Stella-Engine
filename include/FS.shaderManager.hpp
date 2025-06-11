@@ -1,9 +1,9 @@
 #pragma once
 
-#include "FS.swapChain.hpp"
-#include "FS.pipeline.hpp"
-#include "FS.renderPassManager.hpp"
-#include "FS.renderer.hpp"
+#include "fs.swapChain.hpp"
+#include "fs.pipeline.hpp"
+#include "fs.renderPassManager.hpp"
+#include "fs.renderer.hpp"
 
 // glm
 #define GLM_FORCE_RADIANS
@@ -84,25 +84,25 @@ namespace FS
     };
 
 
-    class ShaderManager
+    class FsShaderManager
     {
         public:
             struct PipelineData 
             {
-                std::unique_ptr<LvePipeline> pipeline;
+                std::unique_ptr<FsPipeline> pipeline;
                 VkPipelineLayout pipelineLayout;
             };
 
-            void Init(LveDevice *_device, LveRenderer *_renderer, VkDescriptorSetLayout globalSetLayout);
+            void Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout globalSetLayout);
             const PipelineKey GetOrCreatePipelineKey(const PipelineKey& key);
-            LvePipeline* GetPipeline(const PipelineKey& key);
+            FsPipeline* GetPipeline(const PipelineKey& key);
             VkPipelineLayout GetPipelineLayout(const PipelineKey& key);
             void RecreatePipelines();
             void Cleanup();  
 
         private:
-            LveDevice *device = nullptr;
-            LveRenderer *renderer = nullptr;
+            FsDevice *device = nullptr;
+            FsRenderer *renderer = nullptr;
             VkDescriptorSetLayout globalSetLayout = NULL;
             std::unordered_map<PipelineKey, PipelineData, PipelineKeyHasher> pipelineCache;
 
@@ -110,5 +110,5 @@ namespace FS
     };
 
     // pour faire une instance unique dans le cpp
-    extern ShaderManager shaderManager;
+    extern FsShaderManager shaderManager;
 } 

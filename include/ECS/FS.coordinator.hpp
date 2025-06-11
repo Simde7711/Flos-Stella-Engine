@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ECS/FS.componentManager.hpp"
-#include "ECS/FS.entityManager.hpp"
-#include "ECS/FS.types.hpp"
+#include "ECS/fs.componentManager.hpp"
+#include "ECS/fs.entityManager.hpp"
+#include "ECS/fs.types.hpp"
 
 // std
 #include <memory>
@@ -11,15 +11,15 @@
 
 namespace FS
 {
-    class Coordinator
+    class FsCoordinator
     {
         public: 
             std::unordered_set<Entity> mEntities;
 
             void Init()
             {
-                mComponentManager = std::make_unique<ComponentManager>();
-                mEntityManager = std::make_unique<EntityManager>();
+                mComponentManager = std::make_unique<FsComponentManager>();
+                mEntityManager = std::make_unique<FsEntityManager>();
 
                 RegisterComponents();
             }
@@ -37,7 +37,7 @@ namespace FS
 
             void DestroyEntity(Entity entity)
             {
-                std::cout << "[Coordinator] Destroying entity: " << entity << std::endl;
+                std::cout << "[FsCoordinator] Destroying entity: " << entity << std::endl;
 
                 mComponentManager->EntityDestroyed(entity);
                 mEntityManager->DestroyEntity(entity);
@@ -106,8 +106,8 @@ namespace FS
 
         private:
 
-	        std::unique_ptr<ComponentManager> mComponentManager;
-	        std::unique_ptr<EntityManager> mEntityManager;
+	        std::unique_ptr<FsComponentManager> mComponentManager;
+	        std::unique_ptr<FsEntityManager> mEntityManager;
 
             void RegisterComponents()
             {
@@ -120,5 +120,5 @@ namespace FS
     };
 
     // pour faire une instance unique dans le cpp
-    extern Coordinator gCoordinator;
+    extern FsCoordinator gCoordinator;
 }

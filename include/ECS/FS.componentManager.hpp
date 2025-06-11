@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ECS/FS.componentArray.hpp"
-#include "ECS/components/FS.components.hpp"
-#include "ECS/FS.types.hpp"
+#include "ECS/fs.componentArray.hpp"
+#include "ECS/components/fs.components.hpp"
+#include "ECS/fs.types.hpp"
 
 // std
 #include <any>
@@ -12,7 +12,7 @@
 
 namespace FS
 {
-    class ComponentManager
+    class FsComponentManager
     {
         public:
 
@@ -24,7 +24,7 @@ namespace FS
             assert(mComponentTypes.find(typeName) == mComponentTypes.end() && "Registering component type more than once.");
 
             mComponentTypes.insert({typeName, mNextComponentType});
-            mComponentArrays.insert({typeName, std::make_shared<ComponentArray<T>>()});
+            mComponentArrays.insert({typeName, std::make_shared<FsComponentArray<T>>()});
 
             ++mNextComponentType;
         }
@@ -65,13 +65,13 @@ namespace FS
             // Ensure the component is registered
             assert(mComponentTypes.find(typeName) != mComponentTypes.end() && "Component not registered before use.");
 
-            auto componentArray = std::static_pointer_cast<ComponentArray<T>>(mComponentArrays.at(typeName));
+            auto componentArray = std::static_pointer_cast<FsComponentArray<T>>(mComponentArrays.at(typeName));
             return componentArray->HasEntity(entity);
         }
 
         void EntityDestroyed(Entity entity)
 	    {
-            std::cout << "[ComponentManager] Entity destroyed: " << entity << std::endl;
+            std::cout << "[FsComponentManager] Entity destroyed: " << entity << std::endl;
 
             for (auto const& pair : mComponentArrays)
             {
@@ -88,13 +88,13 @@ namespace FS
         ComponentType mNextComponentType{};
 
         template<typename T>
-        std::shared_ptr<ComponentArray<T>> GetComponentArray()
+        std::shared_ptr<FsComponentArray<T>> GetComponentArray()
         {
             const char* typeName = typeid(T).name();
 
             assert(mComponentTypes.find(typeName) != mComponentTypes.end() && "Component not registered before use.");
 
-            return std::static_pointer_cast<ComponentArray<T>>(mComponentArrays[typeName]);
+            return std::static_pointer_cast<FsComponentArray<T>>(mComponentArrays[typeName]);
         }
     };
 }

@@ -6,7 +6,7 @@
 
 namespace FS
 {
-    class LveCamera
+    class FsCamera
     {
         public: 
 

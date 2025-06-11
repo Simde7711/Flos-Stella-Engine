@@ -1,4 +1,4 @@
-#include "FS.app.hpp"
+#include "fs.app.hpp"
 
 // std
 #include <cstdlib>
@@ -7,7 +7,7 @@
 
 int main()
 {
-    FS::FirstApp app{};
+    FS::FsApp app{};
 
     try
     {

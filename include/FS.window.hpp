@@ -6,14 +6,14 @@
 
 namespace FS
 {
-    class LveWindow
+    class FsWindow
     {
         public:
-            LveWindow(int w, int h, std::string name);
-            ~LveWindow();
+            FsWindow(int w, int h, std::string name);
+            ~FsWindow();
 
-            LveWindow(const LveWindow &) = delete;
-            LveWindow &operator = (const LveWindow &) = delete;
+            FsWindow(const FsWindow &) = delete;
+            FsWindow &operator = (const FsWindow &) = delete;
 
             bool ShouldClose(){ return glfwWindowShouldClose(window);}
             VkExtent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)};}

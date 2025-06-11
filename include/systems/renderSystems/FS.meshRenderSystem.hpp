@@ -1,11 +1,11 @@
 #pragma once 
 
-#include "FS.camera.hpp"
-#include "FS.pipeline.hpp"
-#include "FS.device.hpp"
-#include "FS.frameInfo.hpp"
-#include "ECS/FS.coordinator.hpp"
-#include "FS.shaderManager.hpp"
+#include "fs.camera.hpp"
+#include "fs.pipeline.hpp"
+#include "fs.device.hpp"
+#include "fs.frameInfo.hpp"
+#include "ECS/fs.coordinator.hpp"
+#include "fs.shaderManager.hpp"
 
 // std
 #include <vector>
@@ -13,17 +13,17 @@
 
 namespace FS
 {
-    class MeshRenderSystem
+    class FsMeshRenderSystem
     {
         public:
-            MeshRenderSystem(LveDevice &device);
-            ~MeshRenderSystem();
+            FsMeshRenderSystem(FsDevice &device);
+            ~FsMeshRenderSystem();
 
-            MeshRenderSystem(const LveWindow &) = delete;
-            MeshRenderSystem &operator = (const LveWindow &) = delete;
+            FsMeshRenderSystem(const FsWindow &) = delete;
+            FsMeshRenderSystem &operator = (const FsWindow &) = delete;
 
             void RenderGameObjects(FrameInfo &frameInfo);
         private:
-            LveDevice &lveDevice;
+            FsDevice &device;
     };
 }

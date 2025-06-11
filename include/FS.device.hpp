@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include "FS.window.hpp"
+#include "fs.window.hpp"
 
 // std
 #include <string>
@@ -25,7 +25,7 @@ struct QueueFamilyIndices {
   bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
 };
 
-class LveDevice {
+class FsDevice {
  public:
 #ifdef NDEBUG
   const bool enableValidationLayers = false;
@@ -33,14 +33,14 @@ class LveDevice {
   const bool enableValidationLayers = true;
 #endif
 
-  LveDevice(LveWindow &window);
-  ~LveDevice();
+  FsDevice(FsWindow &window);
+  ~FsDevice();
 
   // Not copyable or movable
-  LveDevice(const LveDevice &) = delete;
-  LveDevice &operator=(const LveDevice &) = delete;
-  LveDevice(LveDevice &&) = delete;
-  LveDevice &operator=(LveDevice &&) = delete;
+  FsDevice(const FsDevice &) = delete;
+  FsDevice &operator=(const FsDevice &) = delete;
+  FsDevice(FsDevice &&) = delete;
+  FsDevice &operator=(FsDevice &&) = delete;
 
   VkCommandPool getCommandPool() { return commandPool; }
   VkDevice device() { return device_; }
@@ -91,7 +91,7 @@ class LveDevice {
   VkInstance instance;
   VkDebugUtilsMessengerEXT debugMessenger;
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-  LveWindow &window;
+  FsWindow &window;
   VkCommandPool commandPool;
 
   VkDevice device_;
@@ -110,7 +110,7 @@ class LveDevice {
   const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
   const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
-  friend class LveBuffer;
+  friend class FsBuffer;
 };
 
 }

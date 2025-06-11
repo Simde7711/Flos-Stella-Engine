@@ -1,28 +1,28 @@
 #pragma once
  
-#include "FS.device.hpp"
+#include "fs.device.hpp"
  
 namespace FS 
 {
  
-    class LveBuffer 
+    class FsBuffer 
     {
     public:
 
     static inline int64_t globalBufferID = 0;
     int64_t bufferID;
 
-    LveBuffer(
-        LveDevice& device,
+    FsBuffer(
+        FsDevice& device,
         VkDeviceSize instanceSize,
         uint32_t instanceCount,
         VkBufferUsageFlags usageFlags,
         VkMemoryPropertyFlags memoryPropertyFlags,
         VkDeviceSize minOffsetAlignment = 1);
-    ~LveBuffer();
+    ~FsBuffer();
     
-    LveBuffer(const LveBuffer&) = delete;
-    LveBuffer& operator=(const LveBuffer&) = delete;
+    FsBuffer(const FsBuffer&) = delete;
+    FsBuffer& operator=(const FsBuffer&) = delete;
     
     VkResult map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
     void unmap();
@@ -49,7 +49,7 @@ namespace FS
     private:
     static VkDeviceSize getAlignment(VkDeviceSize instanceSize, VkDeviceSize minOffsetAlignment);
     
-    LveDevice& lveDevice;
+    FsDevice& device;
     void* mapped = nullptr;
     VkBuffer buffer = VK_NULL_HANDLE;
     VkDeviceMemory memory = VK_NULL_HANDLE;

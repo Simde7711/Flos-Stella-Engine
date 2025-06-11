@@ -1,7 +1,7 @@
 #pragma once
 
-#include "FS.device.hpp"
-#include "FS.buffer.hpp"
+#include "fs.device.hpp"
+#include "fs.buffer.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -13,7 +13,7 @@
 
 namespace FS
 {
-    class LveModel
+    class FsModel
     {
         public:
             struct Vertex
@@ -43,25 +43,25 @@ namespace FS
                 void LoadModel(const std::string &filepath);
             };
 
-            LveModel(LveDevice &lveDevice, const LveModel::Builder &builder);
-            ~LveModel();
+            FsModel(FsDevice &device, const FsModel::Builder &builder);
+            ~FsModel();
 
-            LveModel(const LveModel &) = delete;
-            LveModel &operator = (const LveModel &) = delete;
+            FsModel(const FsModel &) = delete;
+            FsModel &operator = (const FsModel &) = delete;
 
-            static std::unique_ptr<LveModel> CreateModelFromFile(LveDevice &device, const std::string &filepath);
+            static std::unique_ptr<FsModel> CreateModelFromFile(FsDevice &device, const std::string &filepath);
 
             void Bind(VkCommandBuffer commandBuffer);
             void Draw(VkCommandBuffer commandBuffer);
 
         private:
-            LveDevice &lveDevice;
+            FsDevice &device;
 
-            std::unique_ptr<LveBuffer> vertexBuffer;
+            std::unique_ptr<FsBuffer> vertexBuffer;
             uint32_t vertexCount;
 
             bool hasIndexBuffer = false;
-            std::unique_ptr<LveBuffer> indexBuffer;
+            std::unique_ptr<FsBuffer> indexBuffer;
             uint32_t indexCount;
 
             void CreateVertexBuffers(const std::vector<Vertex> &vertices);

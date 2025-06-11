@@ -1,8 +1,8 @@
 #pragma once 
 
-#include "FS.window.hpp"
-#include "FS.device.hpp"
-#include "FS.swapChain.hpp"
+#include "fs.window.hpp"
+#include "fs.device.hpp"
+#include "fs.swapChain.hpp"
 
 // std
 #include <cassert>
@@ -11,19 +11,19 @@
 
 namespace FS
 {
-    class LveRenderer
+    class FsRenderer
     {
         public:
 
-            LveRenderer(LveWindow &window, LveDevice &device);
-            ~LveRenderer();
+            FsRenderer(FsWindow &window, FsDevice &device);
+            ~FsRenderer();
 
-            LveRenderer(const LveWindow &) = delete;
-            LveRenderer &operator = (const LveWindow &) = delete;
+            FsRenderer(const FsWindow &) = delete;
+            FsRenderer &operator = (const FsWindow &) = delete;
 
             bool IsFrameInProgress() const { return isFrameStarted; }
-            float GetAspectRatio() const { return lveSwapChain->extentAspectRatio(); }
-            VkRenderPass GetSwapChainRenderPass(const RenderPassType _type) const { return lveSwapChain->GetRenderPass(_type); }
+            float GetAspectRatio() const { return swapChain->extentAspectRatio(); }
+            VkRenderPass GetSwapChainRenderPass(const RenderPassType _type) const { return swapChain->GetRenderPass(_type); }
 
             VkCommandBuffer GetCurrentCommandBuffer() const 
             {
@@ -47,9 +47,9 @@ namespace FS
             void FreeCommandsBuffers();
             void RecreateSwapChain();
 
-            LveWindow &lveWindow;
-            LveDevice &lveDevice;
-            std::unique_ptr<LveSwapChain> lveSwapChain;
+            FsWindow &window;
+            FsDevice &device;
+            std::unique_ptr<FsSwapChain> swapChain;
             std::vector<VkCommandBuffer> commandBuffers;
 
             uint32_t currentImageIndex;

@@ -1,18 +1,18 @@
-#include "FS.renderPassManager.hpp"
+#include "fs.renderPassManager.hpp"
 
 namespace FS
 {
-    RenderPassManager::RenderPassManager(LveDevice &_device) : device{_device}
+    FsRenderPassManager::FsRenderPassManager(FsDevice &_device) : device{_device}
     {
 
     }
 
-    RenderPassManager::~RenderPassManager()
+    FsRenderPassManager::~FsRenderPassManager()
     {
         CleanupRenderPasses();
     }
 
-    void RenderPassManager::Init(VkFormat _colorFormat, VkFormat _depthFormat, VkExtent2D _extent)
+    void FsRenderPassManager::Init(VkFormat _colorFormat, VkFormat _depthFormat, VkExtent2D _extent)
     {
         swapChainImageFormat = _colorFormat;
         swapChainDepthFormat = _depthFormat;
@@ -22,13 +22,13 @@ namespace FS
         // renderPasses[RenderPassType::Shadow] = CreateShadowRenderPass();
     }
 
-    VkRenderPass RenderPassManager::GetRenderPass(const RenderPassType _type) const 
+    VkRenderPass FsRenderPassManager::GetRenderPass(const RenderPassType _type) const 
     {
         return renderPasses.at(_type);
     }
 
 
-    void RenderPassManager::CleanupRenderPasses()
+    void FsRenderPassManager::CleanupRenderPasses()
     {
         for (auto& [_, renderPass] : renderPasses) 
         {
@@ -40,7 +40,7 @@ namespace FS
         renderPasses.clear();
     }
 
-    VkRenderPass RenderPassManager::CreateForwardRenderPass() 
+    VkRenderPass FsRenderPassManager::CreateForwardRenderPass() 
     {
         VkRenderPass forwardRenderPass{};
 

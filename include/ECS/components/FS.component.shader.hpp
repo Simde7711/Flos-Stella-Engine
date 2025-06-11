@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.shaderManager.hpp"
+#include "fs.shaderManager.hpp"
 
 namespace FS
 {

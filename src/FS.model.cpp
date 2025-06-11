@@ -1,5 +1,5 @@
-#include "FS.model.hpp"
-#include "FS.utils.hpp"
+#include "fs.model.hpp"
+#include "fs.utils.hpp"
 
 // libs
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -16,9 +16,9 @@
 namespace std
 {
     template<>
-    struct hash<FS::LveModel::Vertex> 
+    struct hash<FS::FsModel::Vertex> 
     {
-        size_t operator()( FS::LveModel::Vertex const &vertex) const 
+        size_t operator()( FS::FsModel::Vertex const &vertex) const 
         {
             size_t seed = 0;
             FS::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
@@ -29,37 +29,37 @@ namespace std
 
 namespace FS
 {
-    LveModel::LveModel(LveDevice &device, const LveModel::Builder &builder) : lveDevice{device}
+    FsModel::FsModel(FsDevice &device, const FsModel::Builder &builder) : device{device}
     {
         CreateVertexBuffers(builder.vertices);
         CreateIndexBuffers(builder.indices);
 
-        std::cout << "[LveModel] Created from file, addr=" << this << "\n";
+        std::cout << "[FsModel] Created from file, addr=" << this << "\n";
     }
 
-    LveModel::~LveModel()
+    FsModel::~FsModel()
     {
-       std::cout << "[LveModel] Destroyed, addr=" << this << "\n";
+       std::cout << "[FsModel] Destroyed, addr=" << this << "\n";
     }
 
-    std::unique_ptr<LveModel> LveModel::CreateModelFromFile(LveDevice &device, const std::string &filepath)
+    std::unique_ptr<FsModel> FsModel::CreateModelFromFile(FsDevice &device, const std::string &filepath)
     {
         Builder builder{};
         builder.LoadModel(filepath);
         // std::cout << "Vertex count: " << builder.vertices.size() << "\n";
-        return std::make_unique<LveModel>(device, builder);
+        return std::make_unique<FsModel>(device, builder);
     }
 
-    void LveModel::CreateVertexBuffers(const std::vector<Vertex> &vertices)
+    void FsModel::CreateVertexBuffers(const std::vector<Vertex> &vertices)
     {
         vertexCount = static_cast<uint32_t>(vertices.size());
         assert(vertexCount >= 3 && "Vertex count mut be at least 3");
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertexCount;
         uint32_t vertexSize = sizeof(vertices[0]);
 
-        LveBuffer stagingBuffer
+        FsBuffer stagingBuffer
         {
-            lveDevice,
+            device,
             vertexSize,
             vertexCount,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
@@ -70,19 +70,19 @@ namespace FS
         stagingBuffer.map();
         stagingBuffer.writeToBuffer((void *) vertices.data());
 
-        vertexBuffer = std::make_unique<LveBuffer>
+        vertexBuffer = std::make_unique<FsBuffer>
         (
-            lveDevice,
+            device,
             vertexSize,
             vertexCount, 
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
         );
 
-        lveDevice.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
+        device.copyBuffer(stagingBuffer.getBuffer(), vertexBuffer->getBuffer(), bufferSize);
     }
 
-    void LveModel::CreateIndexBuffers(const std::vector<uint32_t> &indices)
+    void FsModel::CreateIndexBuffers(const std::vector<uint32_t> &indices)
     {
         indexCount = static_cast<uint32_t>(indices.size());
         hasIndexBuffer = indexCount > 0;
@@ -95,9 +95,9 @@ namespace FS
         VkDeviceSize bufferSize = sizeof(indices[0]) * indexCount;
         uint32_t indexSize = sizeof(indices[0]);
 
-        LveBuffer stagingBuffer
+        FsBuffer stagingBuffer
         {
-            lveDevice,
+            device,
             indexSize,
             indexCount,
             VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
@@ -107,19 +107,19 @@ namespace FS
         stagingBuffer.map();
         stagingBuffer.writeToBuffer((void *) indices.data());
 
-        indexBuffer = std::make_unique<LveBuffer>
+        indexBuffer = std::make_unique<FsBuffer>
         (
-            lveDevice,
+            device,
             indexSize,
             indexCount, 
             VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
         );
 
-        lveDevice.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
+        device.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
     }
 
-    void LveModel::Bind(VkCommandBuffer commandBuffer)
+    void FsModel::Bind(VkCommandBuffer commandBuffer)
     {
         VkBuffer buffers[] = {vertexBuffer->getBuffer()};
         VkDeviceSize offsets[] = {0};
@@ -131,7 +131,7 @@ namespace FS
         }
     }
 
-    void LveModel::Draw(VkCommandBuffer commandBuffer)
+    void FsModel::Draw(VkCommandBuffer commandBuffer)
     {
         if (hasIndexBuffer)
         {
@@ -143,7 +143,7 @@ namespace FS
         }
     }
 
-    std::vector<VkVertexInputBindingDescription> LveModel::Vertex::GetBindingDescriptions()
+    std::vector<VkVertexInputBindingDescription> FsModel::Vertex::GetBindingDescriptions()
     {
         std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
         bindingDescriptions[0].binding = 0;
@@ -153,7 +153,7 @@ namespace FS
         return bindingDescriptions;
     }
 
-    std::vector<VkVertexInputAttributeDescription> LveModel::Vertex::GetAttributeDescriptions()
+    std::vector<VkVertexInputAttributeDescription> FsModel::Vertex::GetAttributeDescriptions()
     {
         std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
         
@@ -196,7 +196,7 @@ namespace FS
         return attributeDescriptions;
     }
 
-    void LveModel::Builder::LoadModel(const std::string &filepath) 
+    void FsModel::Builder::LoadModel(const std::string &filepath) 
     {
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;

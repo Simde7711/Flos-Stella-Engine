@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.device.hpp"
+#include "fs.device.hpp"
 
 // vulkan headers
 #include <vulkan/vulkan.h>
@@ -13,19 +13,19 @@
 namespace FS 
 {
   enum class RenderPassType;
-  class RenderPassManager;
+  class FsRenderPassManager;
 
-  class LveSwapChain 
+  class FsSwapChain 
   {
     public:
       static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
  
-      LveSwapChain(LveDevice &deviceRef, VkExtent2D windowExtent);
-      LveSwapChain(LveDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<LveSwapChain> previous);
-      ~LveSwapChain();
+      FsSwapChain(FsDevice &deviceRef, VkExtent2D windowExtent);
+      FsSwapChain(FsDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<FsSwapChain> previous);
+      ~FsSwapChain();
  
-      LveSwapChain(const LveSwapChain &) = delete;
-      LveSwapChain &operator=(const LveSwapChain &) = delete;
+      FsSwapChain(const FsSwapChain &) = delete;
+      FsSwapChain &operator=(const FsSwapChain &) = delete;
       
       VkFramebuffer getFrameBuffer(int index) { return swapChainFramebuffers[index]; }
       
@@ -47,7 +47,7 @@ namespace FS
       VkResult acquireNextImage(uint32_t *imageIndex);
       VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
-      bool CompareSwapFormats(const LveSwapChain &swapChain) const
+      bool CompareSwapFormats(const FsSwapChain &swapChain) const
       {
         return swapChain.swapChainDepthFormat == swapChainDepthFormat && 
                 swapChain.swapChainImageFormat == swapChainImageFormat;
@@ -62,7 +62,7 @@ namespace FS
       void createSyncObjects();
 
       // render pass manager
-      std::unique_ptr<RenderPassManager> renderPassManager;
+      std::unique_ptr<FsRenderPassManager> renderPassManager;
 
       // Helper functions
       VkSurfaceFormatKHR chooseSwapSurfaceFormat(
@@ -83,11 +83,11 @@ namespace FS
       std::vector<VkImage> swapChainImages;
       std::vector<VkImageView> swapChainImageViews;
 
-      LveDevice &device;
+      FsDevice &device;
       VkExtent2D windowExtent;
 
       VkSwapchainKHR swapChain;
-      std::shared_ptr<LveSwapChain> oldSwapChain;
+      std::shared_ptr<FsSwapChain> oldSwapChain;
 
       std::vector<VkSemaphore> imageAvailableSemaphores;
       std::vector<VkSemaphore> renderFinishedSemaphores;

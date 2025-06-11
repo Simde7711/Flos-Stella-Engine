@@ -1,8 +1,7 @@
 #pragma once
 
-// #include "lve_game_object.hpp"
-#include "ECS/components/FS.components.hpp"
-#include "FS.window.hpp"
+#include "ECS/components/fs.components.hpp"
+#include "fs.window.hpp"
 
 namespace FS
 {

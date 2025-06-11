@@ -1,13 +1,13 @@
-#include "FS.app.hpp"
+#include "fs.app.hpp"
 
 #include "keyboard_movement_controller.hpp"
-#include "systems/renderSystems/FS.meshRenderSystem.hpp"
-#include "systems/componentSystems/FS.pointLightSystem.hpp"
-#include "FS.camera.hpp"
-#include "FS.buffer.hpp"
-#include "FS.frameInfo.hpp"
-#include "FS.renderPassManager.hpp"
-#include "FS.shaderManager.hpp"
+#include "systems/renderSystems/fs.meshRenderSystem.hpp"
+#include "systems/componentSystems/fs.pointLightSystem.hpp"
+#include "fs.camera.hpp"
+#include "fs.buffer.hpp"
+#include "fs.frameInfo.hpp"
+#include "fs.renderPassManager.hpp"
+#include "fs.shaderManager.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -22,33 +22,33 @@
 
 namespace FS
 {
-    FirstApp::FirstApp()
+    FsApp::FsApp()
     {
         // entity component system
         gCoordinator.Init();
         
         // TODO: temporaire pour faire marcher le init
-        globalSetLayout = LveDescriptorSetLayout::Builder(lveDevice)   
+        globalSetLayout = FsDescriptorSetLayout::Builder(device)   
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
             .build();
         
         // shader manager
-        shaderManager.Init(&lveDevice, &lveRenderer, globalSetLayout->getDescriptorSetLayout());
+        shaderManager.Init(&device, &renderer, globalSetLayout->getDescriptorSetLayout());
 
-        globalPool = LveDescriptorPool::Builder(lveDevice)
-            .setMaxSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT)
-            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, LveSwapChain::MAX_FRAMES_IN_FLIGHT)
+        globalPool = FsDescriptorPool::Builder(device)
+            .setMaxSets(FsSwapChain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, FsSwapChain::MAX_FRAMES_IN_FLIGHT)
             .build();
 
         LoadGameObjects();
     }
 
-    FirstApp::~FirstApp()
+    FsApp::~FsApp()
     {
         
     }
 
-    void FirstApp::run()
+    void FsApp::run()
     {
         int modelCount = 0;
         for (Entity entity : gCoordinator.mEntities) 
@@ -60,12 +60,12 @@ namespace FS
         }
         // std::cout << "[DEBUG] Total Model components: " << modelCount << "\n";
 
-        std::vector<std::unique_ptr<LveBuffer>> uboBuffers(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+        std::vector<std::unique_ptr<FsBuffer>> uboBuffers(FsSwapChain::MAX_FRAMES_IN_FLIGHT);
         for (int i = 0; i < uboBuffers.size(); i++)
         {
-            uboBuffers[i] = std::make_unique<LveBuffer>
+            uboBuffers[i] = std::make_unique<FsBuffer>
             (
-                lveDevice,
+                device,
                 sizeof(GlobalUbo),
                 1,
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -79,22 +79,22 @@ namespace FS
         //     .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
         //     .build();
 
-        std::vector<VkDescriptorSet> globalDescriptorSets(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+        std::vector<VkDescriptorSet> globalDescriptorSets(FsSwapChain::MAX_FRAMES_IN_FLIGHT);
         for (int i = 0; i < globalDescriptorSets.size(); i++)
         {
             auto bufferInfo = uboBuffers[i]->descriptorInfo();
-            LveDescriptorWriter(*globalSetLayout, *globalPool)
+            FsDescriptorWriter(*globalSetLayout, *globalPool)
                 .writeBuffer(0, &bufferInfo)
                 .build(globalDescriptorSets[i]);
         }
         
         // render systems
-        MeshRenderSystem meshRenderSystem{lveDevice};
+        FsMeshRenderSystem meshRenderSystem{device};
        
         // component system
-        PointLightSystem pointLightSystem{};
+        FsPointLightSystem pointLightSystem{};
         
-        LveCamera camera{}; 
+        FsCamera camera{}; 
         // camera.SetViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
         camera.SetViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
@@ -106,7 +106,7 @@ namespace FS
 
         auto currentTime = std::chrono::high_resolution_clock::now();
 
-        while (!lveWindow.ShouldClose())
+        while (!window.ShouldClose())
         {
             glfwPollEvents();
 
@@ -114,16 +114,16 @@ namespace FS
             float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
             currentTime = newTime;
 
-            cameraController.MoveInPlaneXZ(lveWindow.GetGLFWwindow(), frameTime, gCoordinator.GetComponent<Transform>(entityCamera));
+            cameraController.MoveInPlaneXZ(window.GetGLFWwindow(), frameTime, gCoordinator.GetComponent<Transform>(entityCamera));
             camera.SetViewYXZ(gCoordinator.GetComponent<Transform>(entityCamera).translation, gCoordinator.GetComponent<Transform>(entityCamera).rotation);
 
-            float aspect = lveRenderer.GetAspectRatio();
+            float aspect = renderer.GetAspectRatio();
             // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 80.f);
 
-            if (auto commandBuffer = lveRenderer.BeginFrame())
+            if (auto commandBuffer = renderer.BeginFrame())
             {
-                int frameIndex = lveRenderer.GetFrameIndex();
+                int frameIndex = renderer.GetFrameIndex();
                 FrameInfo frameInfo
                 {
                     frameIndex,
@@ -143,31 +143,31 @@ namespace FS
                 uboBuffers[frameIndex]->flush();
 
                 // render
-                lveRenderer.BeginSwapChainRenderPass(commandBuffer);
+                renderer.BeginSwapChainRenderPass(commandBuffer);
 
                 // order here matters
                 meshRenderSystem.RenderGameObjects(frameInfo);
 
-                lveRenderer.EndSwapChainRenderPass(commandBuffer);
-                lveRenderer.EndFrame();
+                renderer.EndSwapChainRenderPass(commandBuffer);
+                renderer.EndFrame();
             }
         }
 
-        vkDeviceWaitIdle(lveDevice.device());
+        vkDeviceWaitIdle(device.device());
         
         // final cleanup
         shaderManager.Cleanup();
         gCoordinator.DestroyAllEntity();
     }
 
-    void FirstApp::LoadGameObjects()
+    void FsApp::LoadGameObjects()
     {   
         {
             // entity
             Entity flatVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(flatVase, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/flat_vase.obj")});
+            gCoordinator.AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(device, "../models/flat_vase.obj")});
 
             // set le transform
             Transform &transform1 = gCoordinator.GetComponent<Transform>(flatVase);
@@ -190,7 +190,7 @@ namespace FS
             Entity smoothVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(smoothVase, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/smooth_vase.obj")});
+            gCoordinator.AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(device, "../models/smooth_vase.obj")});
 
             // set le transform
             Transform &transform2 = gCoordinator.GetComponent<Transform>(smoothVase);
@@ -213,7 +213,7 @@ namespace FS
             Entity floor = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(floor, Mesh{LveModel::CreateModelFromFile(lveDevice, "../models/quad.obj")});
+            gCoordinator.AddComponent(floor, Mesh{FsModel::CreateModelFromFile(device, "../models/quad.obj")});
 
             // set le transform
             Transform &transform3 = gCoordinator.GetComponent<Transform>(floor);

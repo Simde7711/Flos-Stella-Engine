@@ -1,7 +1,7 @@
-#include "ECS/FS.coordinator.hpp"
+#include "ECS/fs.coordinator.hpp"
 
 namespace FS
 {
     // unique instance de gCoordinator
-    Coordinator gCoordinator;
+    FsCoordinator gCoordinator;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.camera.hpp"
+#include "fs.camera.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -30,7 +30,7 @@ namespace FS
         int frameIndex;
         float frameTime;
         VkCommandBuffer commandBuffer;
-        LveCamera &camera;
+        FsCamera &camera;
         VkDescriptorSet globalDescriptorSet;
     };
 }

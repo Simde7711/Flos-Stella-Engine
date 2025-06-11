@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.swapChain.hpp"
+#include "fs.swapChain.hpp"
 
 // std
 #include <array>
@@ -17,16 +17,16 @@ namespace FS
         GBuffer,
     };
 
-    class RenderPassManager
+    class FsRenderPassManager
     {
         public:
-            RenderPassManager(LveDevice &_device);
-            ~RenderPassManager();
+            FsRenderPassManager(FsDevice &_device);
+            ~FsRenderPassManager();
             
             void Init(VkFormat _colorFormat, VkFormat _depthFormat, VkExtent2D _extent);
             VkRenderPass GetRenderPass(const RenderPassType _type) const;
         private:
-            LveDevice &device;
+            FsDevice &device;
             VkFormat swapChainImageFormat;
             VkFormat swapChainDepthFormat;
             VkExtent2D swapChainExtent;

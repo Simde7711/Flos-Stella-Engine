@@ -1,22 +1,22 @@
-#include "FS.window.hpp"
+#include "fs.window.hpp"
 
 // std
 #include <stdexcept>
 
 namespace FS
 {
-    LveWindow::LveWindow(int _w, int _h, std::string _windowName) : width(_w), height(_h), windowName(_windowName)
+    FsWindow::FsWindow(int _w, int _h, std::string _windowName) : width(_w), height(_h), windowName(_windowName)
     {
         InitWindow();
     }
 
-    LveWindow::~LveWindow()
+    FsWindow::~FsWindow()
     {
         glfwDestroyWindow(window);
         glfwTerminate();
     }
 
-    void LveWindow::InitWindow()
+    void FsWindow::InitWindow()
     {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -27,7 +27,7 @@ namespace FS
         glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
     }
 
-    void LveWindow::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface)
+    void FsWindow::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface)
     {
         if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS)
         {
@@ -35,12 +35,12 @@ namespace FS
         }
     }
 
-    void LveWindow::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
+    void FsWindow::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
     {
-        auto lveWindow = reinterpret_cast<LveWindow *>(glfwGetWindowUserPointer(window));
-        lveWindow->framebufferResized = true;
-        lveWindow->width = width;
-        lveWindow->height = height;
+        auto newWindow = reinterpret_cast<FsWindow *>(glfwGetWindowUserPointer(window));
+        newWindow->framebufferResized = true;
+        newWindow->width = width;
+        newWindow->height = height;
     }
 
 }

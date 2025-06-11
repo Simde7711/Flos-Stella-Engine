@@ -1,7 +1,7 @@
-#include "FS.renderer.hpp"
+#include "fs.renderer.hpp"
 
-#include "FS.renderPassManager.hpp"
-#include "FS.shaderManager.hpp"
+#include "fs.renderPassManager.hpp"
+#include "fs.shaderManager.hpp"
 
 // std
 #include <stdexcept>
@@ -10,38 +10,38 @@
 
 namespace FS
 {
-    LveRenderer::LveRenderer(LveWindow &window, LveDevice &device) : lveWindow{window}, lveDevice{device}
+    FsRenderer::FsRenderer(FsWindow &window, FsDevice &device) : window{window}, device{device}
     {
         RecreateSwapChain();
         CreateCommandBuffers();
     }
 
-    LveRenderer::~LveRenderer()
+    FsRenderer::~FsRenderer()
     {
         FreeCommandsBuffers();
     }
 
-    void LveRenderer::RecreateSwapChain()
+    void FsRenderer::RecreateSwapChain()
     {
-        auto extent = lveWindow.GetExtent();
+        auto extent = window.GetExtent();
         while (extent.width == 0 || extent.height == 0)
         {
-            extent = lveWindow.GetExtent();
+            extent = window.GetExtent();
             glfwWaitEvents();
         }
 
-        vkDeviceWaitIdle(lveDevice.device());
+        vkDeviceWaitIdle(device.device());
 
-        if (lveSwapChain == nullptr)
+        if (swapChain == nullptr)
         {
-            lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent);
+            swapChain = std::make_unique<FsSwapChain>(device, extent);
         }
         else
         {
-            std::shared_ptr<LveSwapChain> oldSwapChain = std::move(lveSwapChain);
-            lveSwapChain = std::make_unique<LveSwapChain>(lveDevice, extent, oldSwapChain);
+            std::shared_ptr<FsSwapChain> oldSwapChain = std::move(swapChain);
+            swapChain = std::make_unique<FsSwapChain>(device, extent, oldSwapChain);
 
-            if (!oldSwapChain->CompareSwapFormats(*lveSwapChain.get()))
+            if (!oldSwapChain->CompareSwapFormats(*swapChain.get()))
             {
                 throw std::runtime_error("swap chains image(or depth) format has changed");
             }
@@ -50,39 +50,39 @@ namespace FS
         }
     }
 
-    void LveRenderer::CreateCommandBuffers()
+    void FsRenderer::CreateCommandBuffers()
     {
-        commandBuffers.resize(LveSwapChain::MAX_FRAMES_IN_FLIGHT);
+        commandBuffers.resize(FsSwapChain::MAX_FRAMES_IN_FLIGHT);
 
         VkCommandBufferAllocateInfo alloInfo{};
         alloInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         alloInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        alloInfo.commandPool = lveDevice.getCommandPool();
+        alloInfo.commandPool = device.getCommandPool();
         alloInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-        if (vkAllocateCommandBuffers(lveDevice.device(), &alloInfo, commandBuffers.data()) != VK_SUCCESS)
+        if (vkAllocateCommandBuffers(device.device(), &alloInfo, commandBuffers.data()) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create allocate buffers");
         }
 
     }
 
-    void LveRenderer::FreeCommandsBuffers()
+    void FsRenderer::FreeCommandsBuffers()
     {
         vkFreeCommandBuffers(
-            lveDevice.device(), 
-            lveDevice.getCommandPool(), 
+            device.device(), 
+            device.getCommandPool(), 
             static_cast<uint32_t>(commandBuffers.size()), 
             commandBuffers.data()
         );
         commandBuffers.clear();
     }
 
-    VkCommandBuffer LveRenderer::BeginFrame()
+    VkCommandBuffer FsRenderer::BeginFrame()
     {
         assert(!isFrameStarted && "cannot begin frame if its already started");
 
-        auto result = lveSwapChain->acquireNextImage(&currentImageIndex);
+        auto result = swapChain->acquireNextImage(&currentImageIndex);
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
@@ -109,7 +109,7 @@ namespace FS
         return commandBuffer;
     }
 
-    void LveRenderer::EndFrame()
+    void FsRenderer::EndFrame()
     {
         assert(isFrameStarted && "cannot end frame when its not started");
 
@@ -120,10 +120,10 @@ namespace FS
             throw std::runtime_error("failed to record command buffer");
         }
 
-        auto result = lveSwapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || lveWindow.WasWindowResized())
+        auto result = swapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.WasWindowResized())
         {
-            lveWindow.ResetWindowResizedFlag();
+            window.ResetWindowResizedFlag();
             RecreateSwapChain();
         }
         else if (result != VK_SUCCESS)
@@ -132,21 +132,21 @@ namespace FS
         }
 
         isFrameStarted = false;
-        currentFrameIndex = (currentFrameIndex + 1) % LveSwapChain::MAX_FRAMES_IN_FLIGHT;
+        currentFrameIndex = (currentFrameIndex + 1) % FsSwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
-    void LveRenderer::BeginSwapChainRenderPass(VkCommandBuffer commandBuffer)
+    void FsRenderer::BeginSwapChainRenderPass(VkCommandBuffer commandBuffer)
     {
         assert(isFrameStarted && "cannot beginSwapChainRenderPass if frame is not in progress");
         assert(commandBuffer == GetCurrentCommandBuffer() && "Cant begin render pass on command buffer from a different frame");
         
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo.renderPass = lveSwapChain->GetRenderPass(RenderPassType::Forward);
-        renderPassInfo.framebuffer = lveSwapChain->getFrameBuffer(currentImageIndex);
+        renderPassInfo.renderPass = swapChain->GetRenderPass(RenderPassType::Forward);
+        renderPassInfo.framebuffer = swapChain->getFrameBuffer(currentImageIndex);
 
         renderPassInfo.renderArea.offset = {0, 0};
-        renderPassInfo.renderArea.extent = lveSwapChain->getSwapChainExtent();
+        renderPassInfo.renderArea.extent = swapChain->getSwapChainExtent();
 
         std::array<VkClearValue, 2> clearValues{};
         clearValues[0].color = {0.01f, 0.01f, 0.1f, 1.0f};
@@ -159,16 +159,16 @@ namespace FS
         VkViewport viewport{};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
-        viewport.width = static_cast<float>(lveSwapChain->getSwapChainExtent().width);
-        viewport.height = static_cast<float>(lveSwapChain->getSwapChainExtent().height);
+        viewport.width = static_cast<float>(swapChain->getSwapChainExtent().width);
+        viewport.height = static_cast<float>(swapChain->getSwapChainExtent().height);
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
-        VkRect2D scissor{{0, 0}, lveSwapChain->getSwapChainExtent()};
+        VkRect2D scissor{{0, 0}, swapChain->getSwapChainExtent()};
         vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
-    void LveRenderer::EndSwapChainRenderPass(VkCommandBuffer commandBuffer)
+    void FsRenderer::EndSwapChainRenderPass(VkCommandBuffer commandBuffer)
     {
         assert(isFrameStarted && "cannot endSwapChainRenderPass if frame is in progress");
         assert(commandBuffer == GetCurrentCommandBuffer() && "Cant end render pass on command buffer from a same frame");

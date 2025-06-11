@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ECS/FS.types.hpp"
+#include "ECS/fs.types.hpp"
 
 // std
 #include <array>
@@ -19,7 +19,7 @@ namespace FS
     };
 
     template<typename T>
-    class ComponentArray : public IComponentArray
+    class FsComponentArray : public IComponentArray
     {
         public:
 
@@ -37,7 +37,7 @@ namespace FS
 
         void RemoveData(Entity entity)
         {
-            std::cout << "[ComponentArray] Removed component for entity: " << entity << std::endl;
+            std::cout << "[FsComponentArray] Removed component for entity: " << entity << std::endl;
 
             assert(mEntityToIndexMap.find(entity) != mEntityToIndexMap.end() && "Removing non-existent component.");
 

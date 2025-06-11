@@ -1,4 +1,4 @@
-#include "systems/renderSystems/FS.meshRenderSystem.hpp"
+#include "systems/renderSystems/fs.meshRenderSystem.hpp"
 
 // std
 #include <stdexcept>
@@ -7,17 +7,17 @@
 
 namespace FS
 {
-    MeshRenderSystem::MeshRenderSystem(LveDevice &device) : lveDevice{device}
+    FsMeshRenderSystem::FsMeshRenderSystem(FsDevice &_device) : device{_device}
     {
 
     }
 
-    MeshRenderSystem::~MeshRenderSystem()
+    FsMeshRenderSystem::~FsMeshRenderSystem()
     {
 
     }
 
-    void MeshRenderSystem::RenderGameObjects(FrameInfo &frameInfo)
+    void FsMeshRenderSystem::RenderGameObjects(FrameInfo &frameInfo)
     {
         for (auto const &entity : gCoordinator.mEntities)
         {
@@ -26,7 +26,7 @@ namespace FS
 
             auto &shaderComp = gCoordinator.GetComponent<Shader>(entity);
 
-            LvePipeline *pipeline = shaderManager.GetPipeline(shaderComp.pipelineKey);
+            FsPipeline *pipeline = shaderManager.GetPipeline(shaderComp.pipelineKey);
             pipeline->Bind(frameInfo.commandBuffer);
             vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shaderManager.GetPipelineLayout(shaderComp.pipelineKey), 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 

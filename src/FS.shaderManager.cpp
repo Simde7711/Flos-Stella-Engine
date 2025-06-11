@@ -1,4 +1,4 @@
-#include "FS.shaderManager.hpp"
+#include "fs.shaderManager.hpp"
 
 // std
 #include <iostream>
@@ -17,16 +17,16 @@
 namespace FS
 {
     // unique instance de shaderManager
-    ShaderManager shaderManager;
+    FsShaderManager shaderManager;
 
-    void ShaderManager::Init(LveDevice *_device, LveRenderer *_renderer, VkDescriptorSetLayout _globalSetLayout)
+    void FsShaderManager::Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout _globalSetLayout)
     {   
         device = _device;
         renderer = _renderer;
         globalSetLayout = _globalSetLayout;
     }
 
-    const PipelineKey ShaderManager::GetOrCreatePipelineKey(const PipelineKey& key)
+    const PipelineKey FsShaderManager::GetOrCreatePipelineKey(const PipelineKey& key)
     {
         auto it = pipelineCache.find(key);
         if (it != pipelineCache.end()) 
@@ -36,12 +36,12 @@ namespace FS
 
         // Create config
         PipelineConfigInfo configInfo{};
-        LvePipeline::defaultPipelineConfigInfo(configInfo);
+        FsPipeline::defaultPipelineConfigInfo(configInfo);
         
         configInfo.pipelineLayout = GetPipelineLayoutForKey(key);
         configInfo.renderPass = renderer->GetSwapChainRenderPass(key.config.renderPassType);
 
-        auto pipeline = std::make_unique<LvePipeline>
+        auto pipeline = std::make_unique<FsPipeline>
         (
             *device, 
             key.vertShaderPath, 
@@ -54,7 +54,7 @@ namespace FS
         return key;
     }
 
-    void ShaderManager::RecreatePipelines()
+    void FsShaderManager::RecreatePipelines()
     {
         std::unordered_map<PipelineKey, PipelineData, PipelineKeyHasher> newCache;
 
@@ -66,11 +66,11 @@ namespace FS
             PipelineKey newKey = oldKey;
 
             PipelineConfigInfo configInfo{};
-            LvePipeline::defaultPipelineConfigInfo(configInfo);
+            FsPipeline::defaultPipelineConfigInfo(configInfo);
             configInfo.pipelineLayout = GetPipelineLayoutForKey(newKey);
             configInfo.renderPass = renderer->GetSwapChainRenderPass(newKey.config.renderPassType);
 
-            auto newPipeline = std::make_unique<LvePipeline>
+            auto newPipeline = std::make_unique<FsPipeline>
             (
                 *device,
                 newKey.vertShaderPath,
@@ -85,7 +85,7 @@ namespace FS
         pipelineCache = std::move(newCache);
     }
 
-    VkPipelineLayout ShaderManager::GetPipelineLayoutForKey(const PipelineKey& key) 
+    VkPipelineLayout FsShaderManager::GetPipelineLayoutForKey(const PipelineKey& key) 
     {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -110,7 +110,7 @@ namespace FS
         return layout;
     }
 
-    LvePipeline* ShaderManager::GetPipeline(const PipelineKey& key)
+    FsPipeline* FsShaderManager::GetPipeline(const PipelineKey& key)
     {
         auto it = pipelineCache.find(key);
 
@@ -121,7 +121,7 @@ namespace FS
         return it->second.pipeline.get();
     }
 
-    VkPipelineLayout ShaderManager::GetPipelineLayout(const PipelineKey& key)
+    VkPipelineLayout FsShaderManager::GetPipelineLayout(const PipelineKey& key)
     {
         auto it = pipelineCache.find(key);
 
@@ -132,7 +132,7 @@ namespace FS
         return it->second.pipelineLayout;
     }
 
-    void ShaderManager::Cleanup()
+    void FsShaderManager::Cleanup()
     {
         for (auto& [key, data] : pipelineCache)
         {

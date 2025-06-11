@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FS.model.hpp"
+#include "fs.model.hpp"
 #include <memory>
 #include <iostream>
 
@@ -15,18 +15,18 @@ namespace FS
 
     struct Mesh
     {
-        std::unique_ptr<LveModel> model;
+        std::unique_ptr<FsModel> model;
         RenderType renderType;
 
         Mesh() = default;
-        Mesh(std::unique_ptr<LveModel> _model) : model(std::move(_model))
+        Mesh(std::unique_ptr<FsModel> _model) : model(std::move(_model))
         {
         
         }
 
         ~Mesh()
         {
-            std::cout << "[Model] Destroyed (ptr=" << model.get() << ") \n";
+            std::cout << "[Mesh] Destroyed (ptr=" << model.get() << ") \n";
         }
 
         // move support
