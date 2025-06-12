@@ -167,7 +167,7 @@ namespace fs
             Entity flatVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(device, "../models/flat_vase.obj")});
+            gCoordinator.AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/flat_vase.obj")});
 
             // set le transform
             Transform &transform1 = gCoordinator.GetComponent<Transform>(flatVase);
@@ -177,12 +177,11 @@ namespace fs
 
             // set le shader
             PipelineKey pipelineKey1{};
-            pipelineKey1.vertShaderPath = "../shaders/simple_shader.vert.spv";
-            pipelineKey1.fragShaderPath = "../shaders/simple_shader.frag.spv";
+            pipelineKey1.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
+            pipelineKey1.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey1{};
             pipelineKey1.config = pipelineConfigKey1;
-            auto key1 = shaderManager.GetOrCreatePipelineKey(pipelineKey1);
-            gCoordinator.AddComponent(flatVase, Shader{key1});
+            gCoordinator.AddComponent(flatVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey1)});
         }
 
         {
@@ -190,7 +189,7 @@ namespace fs
             Entity smoothVase = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(device, "../models/smooth_vase.obj")});
+            gCoordinator.AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/smooth_vase.obj")});
 
             // set le transform
             Transform &transform2 = gCoordinator.GetComponent<Transform>(smoothVase);
@@ -200,12 +199,11 @@ namespace fs
         
             // set le shader
             PipelineKey pipelineKey2{};
-            pipelineKey2.vertShaderPath = "../shaders/simple_shader.vert.spv";
-            pipelineKey2.fragShaderPath = "../shaders/simple_shader.frag.spv";
+            pipelineKey2.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
+            pipelineKey2.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey2{};
             pipelineKey2.config = pipelineConfigKey2;
-            auto key2 = shaderManager.GetOrCreatePipelineKey(pipelineKey2);
-            gCoordinator.AddComponent(smoothVase, Shader{key2});
+            gCoordinator.AddComponent(smoothVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey2)});
         }
 
         {
@@ -213,7 +211,7 @@ namespace fs
             Entity floor = gCoordinator.CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(floor, Mesh{FsModel::CreateModelFromFile(device, "../models/quad.obj")});
+            gCoordinator.AddComponent(floor, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/quad.obj")});
 
             // set le transform
             Transform &transform3 = gCoordinator.GetComponent<Transform>(floor);
@@ -222,12 +220,11 @@ namespace fs
 
             // set le shader
             PipelineKey pipelineKey3{};
-            pipelineKey3.vertShaderPath = "../shaders/simple_shader.vert.spv";
-            pipelineKey3.fragShaderPath = "../shaders/simple_shader.frag.spv";
+            pipelineKey3.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
+            pipelineKey3.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey3{};
             pipelineKey3.config = pipelineConfigKey3;
-            auto key3 = shaderManager.GetOrCreatePipelineKey(pipelineKey3);
-            gCoordinator.AddComponent(floor, Shader{key3});
+            gCoordinator.AddComponent(floor, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey3)});
         }
         
         std::vector<glm::vec3> lightColors{

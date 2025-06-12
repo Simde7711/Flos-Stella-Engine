@@ -26,9 +26,9 @@ namespace fs
         globalSetLayout = _globalSetLayout;
     }
 
-    const PipelineKey FsShaderManager::GetOrCreatePipelineKey(const PipelineKey& key)
+    const PipelineKey FsShaderManager::GetOrCreatePipelineKey(const PipelineKey &_key)
     {
-        auto it = pipelineCache.find(key);
+        auto it = pipelineCache.find(_key);
         if (it != pipelineCache.end()) 
         {
             return it->first;
@@ -38,20 +38,20 @@ namespace fs
         PipelineConfigInfo configInfo{};
         FsPipeline::defaultPipelineConfigInfo(configInfo);
         
-        configInfo.pipelineLayout = GetPipelineLayoutForKey(key);
-        configInfo.renderPass = renderer->GetSwapChainRenderPass(key.config.renderPassType);
+        configInfo.pipelineLayout = GetPipelineLayoutForKey(_key);
+        configInfo.renderPass = renderer->GetSwapChainRenderPass(_key.config.renderPassType);
 
         auto pipeline = std::make_unique<FsPipeline>
         (
             *device, 
-            key.vertShaderPath, 
-            key.fragShaderPath, 
+            _key.vertShaderPath, 
+            _key.fragShaderPath, 
             configInfo
         );
 
-        pipelineCache[key] = { std::move(pipeline), configInfo.pipelineLayout };
+        pipelineCache[_key] = { std::move(pipeline), configInfo.pipelineLayout };
 
-        return key;
+        return _key;
     }
 
     void FsShaderManager::RecreatePipelines()
@@ -85,13 +85,9 @@ namespace fs
         pipelineCache = std::move(newCache);
     }
 
-    VkPipelineLayout FsShaderManager::GetPipelineLayoutForKey(const PipelineKey& key) 
+    // TODO: faire en que sa fait le caching du layout (const PipelineLayoutKey FsShaderManager::GetPipelineLayoutKey(const PipelineLayoutKey &_key))
+    VkPipelineLayout FsShaderManager::GetPipelineLayoutForKey(const PipelineKey &_key) 
     {
-        VkPushConstantRange pushConstantRange{};
-        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
-        pushConstantRange.offset = 0; 
-        pushConstantRange.size = sizeof(SinglePushConstantData);
-
         // TODO NE PAS FAIRE SA, cache les descriptors
         std::vector<VkDescriptorSetLayout> descriptorsLayouts{globalSetLayout};
 
@@ -99,6 +95,12 @@ namespace fs
         layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         layoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorsLayouts.size());
         layoutInfo.pSetLayouts = descriptorsLayouts.data();
+
+        VkPushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        pushConstantRange.offset = 0; 
+        pushConstantRange.size = sizeof(SinglePushConstantData);
+
         layoutInfo.pushConstantRangeCount = 1;
         layoutInfo.pPushConstantRanges = &pushConstantRange;
 
@@ -110,9 +112,9 @@ namespace fs
         return layout;
     }
 
-    FsPipeline* FsShaderManager::GetPipeline(const PipelineKey& key)
+    FsPipeline* FsShaderManager::GetPipeline(const PipelineKey &_key)
     {
-        auto it = pipelineCache.find(key);
+        auto it = pipelineCache.find(_key);
 
         if (it == pipelineCache.end())
         {
@@ -121,9 +123,9 @@ namespace fs
         return it->second.pipeline.get();
     }
 
-    VkPipelineLayout FsShaderManager::GetPipelineLayout(const PipelineKey& key)
+    VkPipelineLayout FsShaderManager::GetPipelineLayout(const PipelineKey &_key)
     {
-        auto it = pipelineCache.find(key);
+        auto it = pipelineCache.find(_key);
 
         if (it == pipelineCache.end())
         {

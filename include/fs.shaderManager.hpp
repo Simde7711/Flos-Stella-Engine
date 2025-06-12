@@ -83,6 +83,11 @@ namespace fs
         }
     };
 
+    // TODO: à utilisé pour le caching
+    struct PipelineLayoutKey
+    {
+
+    };
 
     class FsShaderManager
     {
@@ -93,17 +98,20 @@ namespace fs
                 VkPipelineLayout pipelineLayout;
             };
 
-            void Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout globalSetLayout);
-            const PipelineKey GetOrCreatePipelineKey(const PipelineKey& key);
-            FsPipeline* GetPipeline(const PipelineKey& key);
-            VkPipelineLayout GetPipelineLayout(const PipelineKey& key);
+            void Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout _globalSetLayout);
+            const PipelineKey GetOrCreatePipelineKey(const PipelineKey &_key);
+            FsPipeline* GetPipeline(const PipelineKey &_key);
+            VkPipelineLayout GetPipelineLayout(const PipelineKey &_key);
             void RecreatePipelines();
             void Cleanup();  
 
         private:
             FsDevice *device = nullptr;
             FsRenderer *renderer = nullptr;
+
+            // TODO: Temporaire
             VkDescriptorSetLayout globalSetLayout = NULL;
+
             std::unordered_map<PipelineKey, PipelineData, PipelineKeyHasher> pipelineCache;
 
             VkPipelineLayout GetPipelineLayoutForKey(const PipelineKey& key);

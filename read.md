@@ -5,7 +5,7 @@
 
 - faire la compilation des shaders automatique
 
-- Faire le caching des descriptors sets et rendre cela dynamique 
+- Faire le caching des pipelineLayouts (pushConstants, descriptorSets) et rendre cela dynamique 
 
 - faire des shaders plus dynamics
 
