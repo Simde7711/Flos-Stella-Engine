@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <array>
 #include <cassert>
+#include <iostream>
 
 namespace fs
 {
@@ -46,6 +47,7 @@ namespace fs
                 throw std::runtime_error("swap chains image(or depth) format has changed");
             }
 
+            std::cout << "[FsRenderer] Recreation des pipelines a cause d'un changement dans la swapChain." << '\n';
             shaderManager.RecreatePipelines();
         }
     }

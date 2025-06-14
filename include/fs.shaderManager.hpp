@@ -83,7 +83,7 @@ namespace fs
         }
     };
 
-    // TODO: à utilisé pour le caching
+    // TODO: à utilisé pour le caching, va contenir pushConstants et descriptorSets
     struct PipelineLayoutKey
     {
 
@@ -92,6 +92,7 @@ namespace fs
     class FsShaderManager
     {
         public:
+            // TODO: layoutData va contenir le layout
             struct PipelineData 
             {
                 std::unique_ptr<FsPipeline> pipeline;
@@ -102,6 +103,7 @@ namespace fs
             const PipelineKey GetOrCreatePipelineKey(const PipelineKey &_key);
             FsPipeline* GetPipeline(const PipelineKey &_key);
             VkPipelineLayout GetPipelineLayout(const PipelineKey &_key);
+            void RecreatePipelinesFromShaderPath(const PipelineKey &_key);
             void RecreatePipelines();
             void Cleanup();  
 

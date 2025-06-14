@@ -1,7 +1,7 @@
-rmdir /s /q .\build\
-mkdir build
+@REM rmdir /s /q .\build\
+@REM mkdir build
 cd .\build\
-mkdir shaders
-cmake -G "MinGW Makefiles" ..
-mingw32-make
+@REM mkdir shaders
+cmake -G "Ninja" ..
+ninja -j6
 start FLosStellaEngine.exe

@@ -3,7 +3,15 @@
 
 #### truc a changer dans le futur après les tutos:
 
-- faire la compilation des shaders automatique
+- Ajouter un moyen de faire une hiéarchie avec un component comme dans unity.
+
+- ajout un moyen de lire un .scene file qui va contenir les informations de la scène pour la charger.
+
+- Ajout d'un monobehaviour comme dans unity.
+
+- peut-etre faire en sorte que le watchForChanges() n'est pas a chaque frame.
+
+- faire la compilation des shaders automatique (gérer .glsl, .vert, .frag)
 
 - Faire le caching des pipelineLayouts (pushConstants, descriptorSets) et rendre cela dynamique 
 

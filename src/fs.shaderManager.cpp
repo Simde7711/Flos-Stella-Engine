@@ -54,6 +54,32 @@ namespace fs
         return _key;
     }
 
+    void FsShaderManager::RecreatePipelinesFromShaderPath(const PipelineKey &_key)
+    {
+        for (auto& [key, data] : pipelineCache)
+        {
+            if (key.vertShaderPath == _key.vertShaderPath && key.fragShaderPath == _key.fragShaderPath)
+            {
+                vkDestroyPipelineLayout(device->device(), data.pipelineLayout, nullptr);
+
+                PipelineConfigInfo configInfo{};
+                FsPipeline::defaultPipelineConfigInfo(configInfo);
+                configInfo.pipelineLayout = GetPipelineLayoutForKey(key);
+                configInfo.renderPass = renderer->GetSwapChainRenderPass(key.config.renderPassType);
+
+                auto newPipeline = std::make_unique<FsPipeline>
+                (
+                    *device,
+                    key.vertShaderPath,
+                    key.fragShaderPath,
+                    configInfo
+                );
+
+                pipelineCache[key] = { std::move(newPipeline), configInfo.pipelineLayout };
+            }
+        }
+    }
+
     void FsShaderManager::RecreatePipelines()
     {
         std::unordered_map<PipelineKey, PipelineData, PipelineKeyHasher> newCache;
@@ -85,10 +111,10 @@ namespace fs
         pipelineCache = std::move(newCache);
     }
 
-    // TODO: faire en que sa fait le caching du layout (const PipelineLayoutKey FsShaderManager::GetPipelineLayoutKey(const PipelineLayoutKey &_key))
+    // TODO: faire en que sa fait le caching du layout (const PipelineLayoutKey FsShaderManager::GetOrCreatePipelineLayoutKey(const PipelineLayoutKey &_key))
     VkPipelineLayout FsShaderManager::GetPipelineLayoutForKey(const PipelineKey &_key) 
     {
-        // TODO NE PAS FAIRE SA, cache les descriptors
+        // TODO NE PAS FAIRE SA, cache les descriptors avec la création du key auparavant qui les contients
         std::vector<VkDescriptorSetLayout> descriptorsLayouts{globalSetLayout};
 
         VkPipelineLayoutCreateInfo layoutInfo{};

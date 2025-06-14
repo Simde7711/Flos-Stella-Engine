@@ -3,6 +3,8 @@ project(FlosStellaEngine)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+
 # Set path to Vulkan SDK (if not set via environment)
 if(NOT DEFINED ENV{VULKAN_SDK})
     message(FATAL_ERROR "VULKAN_SDK environment variable not set!")

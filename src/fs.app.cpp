@@ -8,6 +8,7 @@
 #include "fs.frameInfo.hpp"
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
+#include "fs.shaderCompiler.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -26,6 +27,9 @@ namespace fs
     {
         // entity component system
         gCoordinator.Init();
+
+        // shader compiler
+        shaderCompiler.Init(device.device(), "../assets/shaders/", "shaders/");
         
         // TODO: temporaire pour faire marcher le init
         globalSetLayout = FsDescriptorSetLayout::Builder(device)   
@@ -150,6 +154,8 @@ namespace fs
 
                 renderer.EndSwapChainRenderPass(commandBuffer);
                 renderer.EndFrame();
+
+                shaderCompiler.WatchForChanges();
             }
         }
 
@@ -177,8 +183,8 @@ namespace fs
 
             // set le shader
             PipelineKey pipelineKey1{};
-            pipelineKey1.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
-            pipelineKey1.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
+            pipelineKey1.vertShaderPath = "shaders/simple_shader.vert.spv";
+            pipelineKey1.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey1{};
             pipelineKey1.config = pipelineConfigKey1;
             gCoordinator.AddComponent(flatVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey1)});
@@ -199,8 +205,8 @@ namespace fs
         
             // set le shader
             PipelineKey pipelineKey2{};
-            pipelineKey2.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
-            pipelineKey2.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
+            pipelineKey2.vertShaderPath = "shaders/simple_shader.vert.spv";
+            pipelineKey2.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey2{};
             pipelineKey2.config = pipelineConfigKey2;
             gCoordinator.AddComponent(smoothVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey2)});
@@ -220,8 +226,8 @@ namespace fs
 
             // set le shader
             PipelineKey pipelineKey3{};
-            pipelineKey3.vertShaderPath = "../assets/shaders/simple_shader.vert.spv";
-            pipelineKey3.fragShaderPath = "../assets/shaders/simple_shader.frag.spv";
+            pipelineKey3.vertShaderPath = "shaders/simple_shader.vert.spv";
+            pipelineKey3.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey3{};
             pipelineKey3.config = pipelineConfigKey3;
             gCoordinator.AddComponent(floor, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey3)});
