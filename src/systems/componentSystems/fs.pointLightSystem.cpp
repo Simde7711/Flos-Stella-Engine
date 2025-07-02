@@ -11,20 +11,20 @@ namespace fs
 
         int lightIndex = 0;
 
-        for (auto const &entity : gCoordinator.mEntities)
+        for (auto const &entity : FsCoordinator::GetInstance().mEntities)
         {
-            if (!gCoordinator.HasComponent<PointLight>(entity))
+            if (!FsCoordinator::GetInstance().HasComponent<PointLight>(entity))
             {
                 continue; // skip entities missing required components
             }
 
             
             // update light position
-            Transform &transform = gCoordinator.GetComponent<Transform>(entity);
+            Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(entity);
             transform.translation = glm::vec3(rotateLight * glm::vec4(transform.translation, 1.f));
 
             // copy light to ubo
-            PointLight &pointLight = gCoordinator.GetComponent<PointLight>(entity);
+            PointLight &pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(entity);
             globalUbo.pointLights[lightIndex].position = glm::vec4(transform.translation, 1.f);
             globalUbo.pointLights[lightIndex].color = glm::vec4(pointLight.color, pointLight.lightIntensity);
             

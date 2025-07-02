@@ -3,5 +3,5 @@
 namespace fs
 {
     // unique instance de gCoordinator
-    FsCoordinator gCoordinator;
+    FsCoordinator FsCoordinator::instance;
 }

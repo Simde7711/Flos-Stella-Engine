@@ -48,7 +48,7 @@ namespace fs
             }
 
             std::cout << "[FsRenderer] Recreation des pipelines a cause d'un changement dans la swapChain." << '\n';
-            shaderManager.RecreatePipelines();
+            FsShaderManager::GetInstance().RecreatePipelines();
         }
     }
 

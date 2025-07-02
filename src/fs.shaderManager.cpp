@@ -17,7 +17,7 @@
 namespace fs
 {
     // unique instance de shaderManager
-    FsShaderManager shaderManager;
+    FsShaderManager FsShaderManager::instance;
 
     void FsShaderManager::Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout _globalSetLayout)
     {   

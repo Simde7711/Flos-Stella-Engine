@@ -99,6 +99,11 @@ namespace fs
                 VkPipelineLayout pipelineLayout;
             };
 
+            static FsShaderManager &GetInstance()
+            {
+                return instance;
+            }
+
             void Init(FsDevice *_device, FsRenderer *_renderer, VkDescriptorSetLayout _globalSetLayout);
             const PipelineKey GetOrCreatePipelineKey(const PipelineKey &_key);
             FsPipeline* GetPipeline(const PipelineKey &_key);
@@ -108,6 +113,7 @@ namespace fs
             void Cleanup();  
 
         private:
+            static FsShaderManager instance;
             FsDevice *device = nullptr;
             FsRenderer *renderer = nullptr;
 
@@ -118,7 +124,4 @@ namespace fs
 
             VkPipelineLayout GetPipelineLayoutForKey(const PipelineKey& key);
     };
-
-    // pour faire une instance unique dans le cpp
-    extern FsShaderManager shaderManager;
 } 

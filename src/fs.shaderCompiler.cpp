@@ -7,9 +7,9 @@
 namespace fs
 {
     // unique instance de shaderCompiler
-    FsShaderCompiler shaderCompiler;
+    FsShaderCompiler FsShaderCompiler::instance;
 
-    void FsShaderCompiler::Init(VkDevice _device, std::string _sourcePath, std::string _destinationPath)
+    void FsShaderCompiler::Init(FsDevice *_device, std::string _sourcePath, std::string _destinationPath)
     {
         device = _device;
 
@@ -45,7 +45,7 @@ namespace fs
             {
                 std::cout << "[FsShaderCompiler] Debut de la recreation des pipelines." << '\n';
 
-                vkDeviceWaitIdle(device);
+                vkDeviceWaitIdle(device->device());
                 for (const auto &key : shadersChanged)
                 {
                     std::cout << "[FsShaderCompiler] Recreation des pipelines avec les shaders path: " 
@@ -54,7 +54,7 @@ namespace fs
                         << key.fragShaderPath
                         << '\n';
 
-                    shaderManager.RecreatePipelinesFromShaderPath(key);
+                    FsShaderManager::GetInstance().RecreatePipelinesFromShaderPath(key);
                 }
             }
             

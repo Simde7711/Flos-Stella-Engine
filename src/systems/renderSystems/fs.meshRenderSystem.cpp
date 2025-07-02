@@ -19,26 +19,26 @@ namespace fs
 
     void FsMeshRenderSystem::RenderGameObjects(FrameInfo &frameInfo)
     {
-        for (auto const &entity : gCoordinator.mEntities)
+        for (auto const &entity : FsCoordinator::GetInstance().mEntities)
         {
-            if (!gCoordinator.HasComponent<Shader>(entity)) continue;
-            if (!gCoordinator.HasComponent<Mesh>(entity)) continue;
+            if (!FsCoordinator::GetInstance().HasComponent<Shader>(entity)) continue;
+            if (!FsCoordinator::GetInstance().HasComponent<Mesh>(entity)) continue;
 
-            auto &shaderComp = gCoordinator.GetComponent<Shader>(entity);
+            auto &shaderComp = FsCoordinator::GetInstance().GetComponent<Shader>(entity);
 
-            FsPipeline *pipeline = shaderManager.GetPipeline(shaderComp.pipelineKey);
+            FsPipeline *pipeline = FsShaderManager::GetInstance().GetPipeline(shaderComp.pipelineKey);
             pipeline->Bind(frameInfo.commandBuffer);
-            vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shaderManager.GetPipelineLayout(shaderComp.pipelineKey), 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
+            vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, FsShaderManager::GetInstance().GetPipelineLayout(shaderComp.pipelineKey), 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
-            Transform &transform = gCoordinator.GetComponent<Transform>(entity);
+            Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(entity);
 
-            Mesh &mesh = gCoordinator.GetComponent<Mesh>(entity);
+            Mesh &mesh = FsCoordinator::GetInstance().GetComponent<Mesh>(entity);
             if (mesh.model == nullptr) continue;
 
             shaderComp.pushConstant.modelMatrix = transform.mat4();
             shaderComp.pushConstant.normalMatrix = transform.NormalMatrix();
 
-            vkCmdPushConstants(frameInfo.commandBuffer, shaderManager.GetPipelineLayout(shaderComp.pipelineKey), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SinglePushConstantData), &shaderComp.pushConstant);
+            vkCmdPushConstants(frameInfo.commandBuffer, FsShaderManager::GetInstance().GetPipelineLayout(shaderComp.pipelineKey), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SinglePushConstantData), &shaderComp.pushConstant);
 
             mesh.model->Bind(frameInfo.commandBuffer);
             mesh.model->Draw(frameInfo.commandBuffer);

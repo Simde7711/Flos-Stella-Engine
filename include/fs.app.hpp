@@ -9,14 +9,18 @@
 // std
 #include <vector>
 #include <memory>
+#include <string>
+
+// mINI
+#include "ini.h"
 
 namespace fs
 {
     class FsApp
     {
         public:
-            static constexpr int WIDTH = 800;
-            static constexpr int HEIGHT = 600;
+            static constexpr int DEFAULT_WIDTH = 800;
+            static constexpr int DEFAULT_HEIGHT = 600;
 
             FsApp();
             ~FsApp();
@@ -26,15 +30,16 @@ namespace fs
 
             void run();
         private:
-            void LoadGameObjects();
-
-            FsWindow window{WIDTH, HEIGHT, "Flōs Stella Engine V0.002"};
-            FsDevice device{window};
-            FsRenderer renderer{window, device};
-            std::unique_ptr<FsDescriptorPool> globalPool{};
-
-            // TODO: temporaire
-            std::unique_ptr<FsDescriptorSetLayout> globalSetLayout;
         
+        std::unique_ptr<FsWindow> window;
+        std::unique_ptr<FsDevice> device;
+        std::unique_ptr<FsRenderer> renderer;
+        std::unique_ptr<FsDescriptorPool> globalPool{};
+        
+        // TODO: temporaire
+        std::unique_ptr<FsDescriptorSetLayout> globalSetLayout;
+        
+        void LoadGameObjects();
+        mINI::INIStructure ConfigParsing(std::string _iniPath);
     };
 }

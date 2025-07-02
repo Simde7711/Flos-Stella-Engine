@@ -17,11 +17,16 @@ namespace fs
     class FsShaderCompiler
     {
         public:
+            static FsShaderCompiler &GetInstance()
+            {
+                return instance;
+            }
+
             /// @brief Initiation de la classe ShaderCompiler
-            /// @param _device (VkDevice) Device pour Vulkan.
+            /// @param _device (FsDevice) Device pour Vulkan.
             /// @param _sourcePath (std::string) Chemin du dossier contenant les fichiers de shader.
             /// @param _destinationPath (std::string) Chemin du dossier qui va contenir les shaders compilés en .spv.
-            void Init(VkDevice _device, std::string _sourcePath, std::string _destinationPath);
+            void Init(FsDevice *_device, std::string _sourcePath, std::string _destinationPath);
             
             /// @brief Regarde pour les changements dans les fichers de shader
             /// @param _startup (bool) Empêche de recréer des pipelines qu'on pas encore été créés (Défaut à false).
@@ -37,7 +42,9 @@ namespace fs
             void CompileShader(const std::filesystem::__cxx11::path &_file);
 
         private:
-            VkDevice device;
+            static FsShaderCompiler instance;
+
+            FsDevice *device;
 
             std::string sourcePath;
             std::string destinationPath;
@@ -45,7 +52,4 @@ namespace fs
             std::unordered_map<std::string, std::filesystem::file_time_type> filesWriteTime;
             std::vector<PipelineKey> shadersChanged;
     };
-
-    // pour faire une instance unique dans le cpp
-    extern FsShaderCompiler shaderCompiler;
 }

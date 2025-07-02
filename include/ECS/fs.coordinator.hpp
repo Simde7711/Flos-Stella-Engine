@@ -16,6 +16,11 @@ namespace fs
         public: 
             std::unordered_set<Entity> mEntities;
 
+            static FsCoordinator &GetInstance()
+            {
+                return instance;
+            }
+
             void Init()
             {
                 mComponentManager = std::make_unique<FsComponentManager>();
@@ -105,7 +110,7 @@ namespace fs
             }
 
         private:
-
+            static FsCoordinator instance;
 	        std::unique_ptr<FsComponentManager> mComponentManager;
 	        std::unique_ptr<FsEntityManager> mEntityManager;
 
@@ -118,7 +123,4 @@ namespace fs
                 RegisterComponent<Shader>();
             }
     };
-
-    // pour faire une instance unique dans le cpp
-    extern FsCoordinator gCoordinator;
 }

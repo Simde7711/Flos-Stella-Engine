@@ -9,6 +9,7 @@
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
 #include "fs.shaderCompiler.hpp"
+#include "fs.logger.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -25,21 +26,36 @@ namespace fs
 {
     FsApp::FsApp()
     {
+        // parsing INI
+        mINI::INIStructure config = ConfigParsing("../config.ini");
+
+        // logger 
+        FsLogger::GetInstance().Init(config["Logger"]);
+
+        // window
+        window = std::make_unique<FsWindow>(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Flōs Stella Engine V0.002");
+
+        // device
+        device = std::make_unique<FsDevice>(*window);
+
+        // renderer
+        renderer = std::make_unique<FsRenderer>(*window, *device);
+
         // entity component system
-        gCoordinator.Init();
+        FsCoordinator::GetInstance().Init();
 
         // shader compiler
-        shaderCompiler.Init(device.device(), "../assets/shaders/", "shaders/");
+        FsShaderCompiler::GetInstance().Init(device.get(), "../assets/shaders/", "shaders/");
         
         // TODO: temporaire pour faire marcher le init
-        globalSetLayout = FsDescriptorSetLayout::Builder(device)   
+        globalSetLayout = FsDescriptorSetLayout::Builder(*device)   
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
             .build();
         
         // shader manager
-        shaderManager.Init(&device, &renderer, globalSetLayout->getDescriptorSetLayout());
+        FsShaderManager::GetInstance().Init(device.get(), renderer.get(), globalSetLayout->getDescriptorSetLayout());
 
-        globalPool = FsDescriptorPool::Builder(device)
+        globalPool = FsDescriptorPool::Builder(*device)
             .setMaxSets(FsSwapChain::MAX_FRAMES_IN_FLIGHT)
             .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, FsSwapChain::MAX_FRAMES_IN_FLIGHT)
             .build();
@@ -52,12 +68,21 @@ namespace fs
         
     }
 
+    mINI::INIStructure FsApp::ConfigParsing(std::string _initPath)
+    {
+        mINI::INIFile file(_initPath);
+        mINI::INIStructure ini;
+        file.read(ini);
+
+        return ini;
+    }
+
     void FsApp::run()
     {
         int modelCount = 0;
-        for (Entity entity : gCoordinator.mEntities) 
+        for (Entity entity : FsCoordinator::GetInstance().mEntities) 
         {
-            if (gCoordinator.HasComponent<Mesh>(entity)) {
+            if (FsCoordinator::GetInstance().HasComponent<Mesh>(entity)) {
                 // std::cout << "[DEBUG] Entity " << entity << " has Model component\n";
                 ++modelCount;
             }
@@ -69,7 +94,7 @@ namespace fs
         {
             uboBuffers[i] = std::make_unique<FsBuffer>
             (
-                device,
+                *device,
                 sizeof(GlobalUbo),
                 1,
                 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -93,7 +118,7 @@ namespace fs
         }
         
         // render systems
-        FsMeshRenderSystem meshRenderSystem{device};
+        FsMeshRenderSystem meshRenderSystem{*device};
        
         // component system
         FsPointLightSystem pointLightSystem{};
@@ -103,14 +128,14 @@ namespace fs
         camera.SetViewTarget(glm::vec3(-1.f, -2.f, 2.f), glm::vec3(0.f, 0.f, 2.5f));
 
         // créer l'entity de la caméra
-        Entity entityCamera = gCoordinator.CreateEntity();
-        gCoordinator.GetComponent<Transform>(entityCamera).translation.z = -2.5f;
+        Entity entityCamera = FsCoordinator::GetInstance().CreateEntity();
+        FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).translation.z = -2.5f;
 
         KeyboardMovementController cameraController{};
 
         auto currentTime = std::chrono::high_resolution_clock::now();
 
-        while (!window.ShouldClose())
+        while (!window->ShouldClose())
         {
             glfwPollEvents();
 
@@ -118,16 +143,16 @@ namespace fs
             float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
             currentTime = newTime;
 
-            cameraController.MoveInPlaneXZ(window.GetGLFWwindow(), frameTime, gCoordinator.GetComponent<Transform>(entityCamera));
-            camera.SetViewYXZ(gCoordinator.GetComponent<Transform>(entityCamera).translation, gCoordinator.GetComponent<Transform>(entityCamera).rotation);
+            cameraController.MoveInPlaneXZ(window->GetGLFWwindow(), frameTime, FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera));
+            camera.SetViewYXZ(FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).translation, FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).rotation);
 
-            float aspect = renderer.GetAspectRatio();
+            float aspect = renderer->GetAspectRatio();
             // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
             camera.SetPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 80.f);
 
-            if (auto commandBuffer = renderer.BeginFrame())
+            if (auto commandBuffer = renderer->BeginFrame())
             {
-                int frameIndex = renderer.GetFrameIndex();
+                int frameIndex = renderer->GetFrameIndex();
                 FrameInfo frameInfo
                 {
                     frameIndex,
@@ -147,36 +172,39 @@ namespace fs
                 uboBuffers[frameIndex]->flush();
 
                 // render
-                renderer.BeginSwapChainRenderPass(commandBuffer);
+                renderer->BeginSwapChainRenderPass(commandBuffer);
 
                 // order here matters
                 meshRenderSystem.RenderGameObjects(frameInfo);
 
-                renderer.EndSwapChainRenderPass(commandBuffer);
-                renderer.EndFrame();
+                renderer->EndSwapChainRenderPass(commandBuffer);
+                renderer->EndFrame();
 
-                shaderCompiler.WatchForChanges();
+                FsShaderCompiler::GetInstance().WatchForChanges();
             }
+
+            FsLogger::GetInstance().FlushFile();
         }
 
-        vkDeviceWaitIdle(device.device());
+        vkDeviceWaitIdle(device->device());
         
         // final cleanup
-        shaderManager.Cleanup();
-        gCoordinator.DestroyAllEntity();
+        FsShaderManager::GetInstance().Cleanup();
+        FsCoordinator::GetInstance().DestroyAllEntity();
+        FsLogger::GetInstance().Cleanup();
     }
 
     void FsApp::LoadGameObjects()
     {   
         {
             // entity
-            Entity flatVase = gCoordinator.CreateEntity();
+            Entity flatVase = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/flat_vase.obj")});
+            FsCoordinator::GetInstance().AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/flat_vase.obj")});
 
             // set le transform
-            Transform &transform1 = gCoordinator.GetComponent<Transform>(flatVase);
+            Transform &transform1 = FsCoordinator::GetInstance().GetComponent<Transform>(flatVase);
             transform1.translation = {-.5f, .5f, 0.f};
             transform1.rotation.z = 0.f;
             transform1.scale = {3.f, 1.5, 3.f};
@@ -187,18 +215,18 @@ namespace fs
             pipelineKey1.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey1{};
             pipelineKey1.config = pipelineConfigKey1;
-            gCoordinator.AddComponent(flatVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey1)});
+            FsCoordinator::GetInstance().AddComponent(flatVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey1)});
         }
 
         {
             // entity
-            Entity smoothVase = gCoordinator.CreateEntity();
+            Entity smoothVase = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/smooth_vase.obj")});
+            FsCoordinator::GetInstance().AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/smooth_vase.obj")});
 
             // set le transform
-            Transform &transform2 = gCoordinator.GetComponent<Transform>(smoothVase);
+            Transform &transform2 = FsCoordinator::GetInstance().GetComponent<Transform>(smoothVase);
             transform2.translation = {.5f, .5f, 0.f};
             transform2.rotation.z = 0.f;
             transform2.scale = glm::vec3(3.f);
@@ -209,18 +237,18 @@ namespace fs
             pipelineKey2.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey2{};
             pipelineKey2.config = pipelineConfigKey2;
-            gCoordinator.AddComponent(smoothVase, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey2)});
+            FsCoordinator::GetInstance().AddComponent(smoothVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey2)});
         }
 
         {
             // entity
-            Entity floor = gCoordinator.CreateEntity();
+            Entity floor = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            gCoordinator.AddComponent(floor, Mesh{FsModel::CreateModelFromFile(device, "../assets/models/quad.obj")});
+            FsCoordinator::GetInstance().AddComponent(floor, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/quad.obj")});
 
             // set le transform
-            Transform &transform3 = gCoordinator.GetComponent<Transform>(floor);
+            Transform &transform3 = FsCoordinator::GetInstance().GetComponent<Transform>(floor);
             transform3.translation = {0.f, .5f, 0.f};
             transform3.scale = {3.f, 1.f, 3.f};
 
@@ -230,7 +258,7 @@ namespace fs
             pipelineKey3.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey3{};
             pipelineKey3.config = pipelineConfigKey3;
-            gCoordinator.AddComponent(floor, Shader{shaderManager.GetOrCreatePipelineKey(pipelineKey3)});
+            FsCoordinator::GetInstance().AddComponent(floor, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey3)});
         }
         
         std::vector<glm::vec3> lightColors{
@@ -245,12 +273,12 @@ namespace fs
         for (int i = 0; i < lightColors.size(); i++)
         {
             // crée l'entity et ajoute le pointLight component
-            Entity pointLightEntity = gCoordinator.CreateEntity();
-            gCoordinator.AddComponent(pointLightEntity, PointLight{});
+            Entity pointLightEntity = FsCoordinator::GetInstance().CreateEntity();
+            FsCoordinator::GetInstance().AddComponent(pointLightEntity, PointLight{});
             
             // récupère les components
-            Transform &transform = gCoordinator.GetComponent<Transform>(pointLightEntity);
-            PointLight &pointLight = gCoordinator.GetComponent<PointLight>(pointLightEntity);
+            Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(pointLightEntity);
+            PointLight &pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(pointLightEntity);
             
             pointLight.lightIntensity = 0.2f;
             pointLight.color = lightColors[i];

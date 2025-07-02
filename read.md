@@ -3,6 +3,8 @@
 
 #### truc a changer dans le futur après les tutos:
 
+- Utiliser le logger à la place du std::cout
+
 - Ajouter un moyen de faire une hiéarchie avec un component comme dans unity.
 
 - ajout un moyen de lire un .scene file qui va contenir les informations de la scène pour la charger.
