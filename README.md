@@ -1,7 +1,18 @@
 # Flōs Stella Engine
 ![Project Logo](images_readMe/logo_Flos_Stella_1.png)
 
-#### truc a changer dans le futur après les tutos:
+# ----------------- Setup ------------------------^
+
+### Clangd
+# PowerShell
+cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON; Copy-Item build\compile_commands.json .
+
+
+### build
+Executer compileProject.bat
+
+
+# ----------------- Todo ------------------------
 
 - Utiliser le logger à la place du std::cout
 

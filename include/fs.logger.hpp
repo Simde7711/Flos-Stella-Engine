@@ -7,7 +7,7 @@
 #include <utility>
 
 // mINI
-#include "ini.h"
+#include <mini/ini.h>
 
 namespace fs
 {

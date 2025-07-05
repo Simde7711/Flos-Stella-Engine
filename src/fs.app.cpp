@@ -5,6 +5,7 @@
 #include "systems/componentSystems/fs.pointLightSystem.hpp"
 #include "fs.camera.hpp"
 #include "fs.buffer.hpp"
+#include "ECS/fs.coordinator.hpp"
 #include "fs.frameInfo.hpp"
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
@@ -13,13 +14,14 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include "glm.hpp"
-#include "gtc/constants.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
 
 // std
 #include <stdexcept>
 #include <chrono>
 #include <array>
+#include <vector>
 #include <cassert>
 
 namespace fs

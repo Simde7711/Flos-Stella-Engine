@@ -1,7 +1,7 @@
 #pragma once
 
 // libs
-#include "glm.hpp"
+#include <glm/glm.hpp>
 
 namespace fs
 {

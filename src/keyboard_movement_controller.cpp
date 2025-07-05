@@ -1,5 +1,5 @@
 #include "keyboard_movement_controller.hpp"
-#include "gtc/quaternion.hpp"
+#include <glm/gtc/quaternion.hpp>
 
 namespace fs
 {
