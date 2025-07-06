@@ -26,13 +26,12 @@
 
 namespace fs
 {
-    FsApp::FsApp()
+    FsApp::FsApp(mINI::INIStructure _config)
     {
-        // parsing INI
-        mINI::INIStructure config = ConfigParsing("../config.ini");
+        FsLogger::GetInstance().Log(LogType::System, "Ouverture de l'application");
 
-        // logger 
-        FsLogger::GetInstance().Init(config["Logger"]);
+        // set la config dans une variable.
+        config = _config;
 
         // window
         window = std::make_unique<FsWindow>(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Flōs Stella Engine V0.002");
@@ -67,16 +66,13 @@ namespace fs
 
     FsApp::~FsApp()
     {
-        
-    }
+        // cleanup du shader manager.
+        FsShaderManager::GetInstance().Cleanup();
 
-    mINI::INIStructure FsApp::ConfigParsing(std::string _initPath)
-    {
-        mINI::INIFile file(_initPath);
-        mINI::INIStructure ini;
-        file.read(ini);
+        // detruit tout les entities et cleanup du coordinator.
+        FsCoordinator::GetInstance().DestroyAllEntity();
 
-        return ini;
+        FsLogger::GetInstance().Log(LogType::System, "Fermeture de l'application");
     }
 
     void FsApp::run()
@@ -189,11 +185,6 @@ namespace fs
         }
 
         vkDeviceWaitIdle(device->device());
-        
-        // final cleanup
-        FsShaderManager::GetInstance().Cleanup();
-        FsCoordinator::GetInstance().DestroyAllEntity();
-        FsLogger::GetInstance().Cleanup();
     }
 
     void FsApp::LoadGameObjects()

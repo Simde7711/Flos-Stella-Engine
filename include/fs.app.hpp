@@ -20,7 +20,7 @@ namespace fs
             static constexpr int DEFAULT_WIDTH = 800;
             static constexpr int DEFAULT_HEIGHT = 600;
 
-            FsApp();
+            FsApp(mINI::INIStructure _config);
             ~FsApp();
 
             FsApp(const FsWindow &) = delete;
@@ -37,7 +37,8 @@ namespace fs
         // TODO: temporaire
         std::unique_ptr<FsDescriptorSetLayout> globalSetLayout;
         
+        mINI::INIStructure config;
+
         void LoadGameObjects();
-        mINI::INIStructure ConfigParsing(std::string _iniPath);
     };
 }

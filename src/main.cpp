@@ -1,23 +1,42 @@
 #include "fs.app.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <cstdlib>
-#include <iostream>
-#include <stdexcept>
+
+// mINI
+#include <mini/ini.h>
 
 int main()
 {
-    fs::FsApp app{};
+    // parse le fichier de config
+    mINI::INIFile file("../config.ini");
+    mINI::INIStructure config;
+    file.read(config);
+
+    // logger 
+    fs::FsLogger::GetInstance().Init(config["Logger"]);
+
+    bool success = true;
 
     try
     {
+        fs::FsApp app{config};
         app.run();
     }
     catch (const std::exception &e)
     {
-        std::cerr << e.what() << '\n';
-        return EXIT_FAILURE;
+        // log l'exception
+        fs::FsLogger::GetInstance().Log(fs::LogType::Error, e.what());
+
+        success = false;
     }
 
-    return EXIT_SUCCESS;
+    // cleanup du logger
+    fs::FsLogger::GetInstance().Cleanup();
+
+    if (success)
+        return EXIT_SUCCESS;
+    else
+        return EXIT_FAILURE;
 }

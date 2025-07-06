@@ -1,4 +1,5 @@
 #include "fs.device.hpp"
+#include "fs.logger.hpp"
 
 // std headers
 #include <cstring>
@@ -14,7 +15,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
     void *pUserData) {
-  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+  const char* rawMsg = pCallbackData->pMessage ? pCallbackData->pMessage : "";
+  FsLogger::GetInstance().Log(LogType::Error, std::string("validation layer: ") + rawMsg);
 
   return VK_FALSE;
 }
