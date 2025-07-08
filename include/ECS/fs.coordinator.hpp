@@ -35,7 +35,8 @@ namespace fs
                 mEntities.insert(entity);
                 
                 // ajoute les components universels
-                AddComponent(entity, Transform{});
+                AddComponent<Transform>(entity, Transform{});
+                AddComponent<Active>(entity, Active{});
 
                 return entity;
             }
@@ -109,6 +110,23 @@ namespace fs
                 mEntities.clear();
             }
 
+            inline void SetActive(Entity entity, bool active)
+            {
+                if (active)  
+                {    
+                    AddComponent<Active>(entity, Active{});
+                }
+                else
+                {
+                    RemoveComponent<Active>(entity);
+                }
+            }
+
+            inline bool IsEntityActive(Entity entity)
+            {
+                return HasComponent<Active>(entity);
+            }
+
         private:
             static FsCoordinator instance;
 	        std::unique_ptr<FsComponentManager> mComponentManager;
@@ -118,6 +136,7 @@ namespace fs
             {
                 // Register all engine components
                 RegisterComponent<Transform>();
+                RegisterComponent<Active>();
                 RegisterComponent<Mesh>();
                 RegisterComponent<PointLight>();
                 RegisterComponent<Shader>();

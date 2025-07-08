@@ -194,7 +194,7 @@ namespace fs
             Entity flatVase = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            FsCoordinator::GetInstance().AddComponent(flatVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/flat_vase.obj")});
+            FsCoordinator::GetInstance().AddComponent<Mesh>(flatVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/flat_vase.obj")});
 
             // set le transform
             Transform &transform1 = FsCoordinator::GetInstance().GetComponent<Transform>(flatVase);
@@ -208,7 +208,7 @@ namespace fs
             pipelineKey1.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey1{};
             pipelineKey1.config = pipelineConfigKey1;
-            FsCoordinator::GetInstance().AddComponent(flatVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey1)});
+            FsCoordinator::GetInstance().AddComponent<Shader>(flatVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey1)});
         }
 
         {
@@ -216,7 +216,7 @@ namespace fs
             Entity smoothVase = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            FsCoordinator::GetInstance().AddComponent(smoothVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/smooth_vase.obj")});
+            FsCoordinator::GetInstance().AddComponent<Mesh>(smoothVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/smooth_vase.obj")});
 
             // set le transform
             Transform &transform2 = FsCoordinator::GetInstance().GetComponent<Transform>(smoothVase);
@@ -230,7 +230,7 @@ namespace fs
             pipelineKey2.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey2{};
             pipelineKey2.config = pipelineConfigKey2;
-            FsCoordinator::GetInstance().AddComponent(smoothVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey2)});
+            FsCoordinator::GetInstance().AddComponent<Shader>(smoothVase, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey2)});
         }
 
         {
@@ -238,7 +238,7 @@ namespace fs
             Entity floor = FsCoordinator::GetInstance().CreateEntity();
             
             // ajout du model
-            FsCoordinator::GetInstance().AddComponent(floor, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/quad.obj")});
+            FsCoordinator::GetInstance().AddComponent<Mesh>(floor, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/quad.obj")});
 
             // set le transform
             Transform &transform3 = FsCoordinator::GetInstance().GetComponent<Transform>(floor);
@@ -251,7 +251,7 @@ namespace fs
             pipelineKey3.fragShaderPath = "shaders/simple_shader.frag.spv";
             PipelineConfigKey pipelineConfigKey3{};
             pipelineKey3.config = pipelineConfigKey3;
-            FsCoordinator::GetInstance().AddComponent(floor, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey3)});
+            FsCoordinator::GetInstance().AddComponent<Shader>(floor, Shader{FsShaderManager::GetInstance().GetOrCreatePipelineKey(pipelineKey3)});
         }
         
         std::vector<glm::vec3> lightColors{
@@ -267,7 +267,7 @@ namespace fs
         {
             // crée l'entity et ajoute le pointLight component
             Entity pointLightEntity = FsCoordinator::GetInstance().CreateEntity();
-            FsCoordinator::GetInstance().AddComponent(pointLightEntity, PointLight{});
+            FsCoordinator::GetInstance().AddComponent<PointLight>(pointLightEntity, PointLight{});
             
             // récupère les components
             Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(pointLightEntity);

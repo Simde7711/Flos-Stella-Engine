@@ -1,6 +1,8 @@
 #pragma once
 
 #include "fs.model.hpp"
+
+// std
 #include <memory>
 #include <iostream>
 
@@ -15,6 +17,8 @@ namespace fs
 
     struct Mesh
     {
+        bool active = true;
+
         std::unique_ptr<FsModel> model;
         RenderType renderType;
 

@@ -1,8 +1,6 @@
 #include "systems/renderSystems/fs.meshRenderSystem.hpp"
 
 // std
-#include <stdexcept>
-#include <array>
 #include <cassert>
 
 namespace fs
@@ -21,8 +19,13 @@ namespace fs
     {
         for (auto const &entity : FsCoordinator::GetInstance().mEntities)
         {
+            if (!FsCoordinator::GetInstance().IsEntityActive(entity)) continue;
+
             if (!FsCoordinator::GetInstance().HasComponent<Shader>(entity)) continue;
             if (!FsCoordinator::GetInstance().HasComponent<Mesh>(entity)) continue;
+            
+            Mesh &mesh = FsCoordinator::GetInstance().GetComponent<Mesh>(entity);
+            if (mesh.model == nullptr || !mesh.active) continue;
 
             auto &shaderComp = FsCoordinator::GetInstance().GetComponent<Shader>(entity);
 
@@ -31,9 +34,6 @@ namespace fs
             vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, FsShaderManager::GetInstance().GetPipelineLayout(shaderComp.pipelineKey), 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
 
             Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(entity);
-
-            Mesh &mesh = FsCoordinator::GetInstance().GetComponent<Mesh>(entity);
-            if (mesh.model == nullptr) continue;
 
             shaderComp.pushConstant.modelMatrix = transform.mat4();
             shaderComp.pushConstant.normalMatrix = transform.NormalMatrix();

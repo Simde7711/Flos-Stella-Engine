@@ -2,3 +2,4 @@
 #include "ECS/components/fs.component.mesh.hpp"
 #include "ECS/components/fs.component.pointLight.hpp"
 #include "ECS/components/fs.component.shader.hpp"
+#include "ECS/components/fs.component.active.hpp"
