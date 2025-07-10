@@ -1,9 +1,11 @@
 #pragma once
 
-#include "fs.swapChain.hpp"
+#include "fs.device.hpp"
 #include "fs.pipeline.hpp"
 #include "fs.renderPassManager.hpp"
 #include "fs.renderer.hpp"
+
+#include <vulkan/vulkan.h>
 
 // glm
 #define GLM_FORCE_RADIANS

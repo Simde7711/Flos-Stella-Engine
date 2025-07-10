@@ -1,11 +1,11 @@
 #pragma once
 
-#include "fs.swapChain.hpp"
+#include "fs.device.hpp"
+
+#include <vulkan/vulkan.h>
 
 // std
-#include <array>
 #include <unordered_map>
-#include <stdexcept>
 
 namespace fs
 {

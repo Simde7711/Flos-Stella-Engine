@@ -4,6 +4,8 @@
 #include "fs.device.hpp"
 #include "fs.swapChain.hpp"
 
+#include <vulkan/vulkan.h>
+
 // std
 #include <cassert>
 #include <vector>

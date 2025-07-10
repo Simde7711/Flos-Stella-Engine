@@ -1,7 +1,14 @@
 #include "fs.shaderManager.hpp"
+#include "fs.device.hpp"
+#include "fs.renderer.hpp"
+
+#include <vulkan/vulkan.h>
 
 // std
-#include <iostream>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+#include <stdexcept>
 
 // void DebugCacheContenu(auto &cache)
 // {

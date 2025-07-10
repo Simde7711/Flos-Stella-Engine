@@ -2,11 +2,10 @@
 
 #include "fs.device.hpp"
 
-// vulkan headers
+// vulkan
 #include <vulkan/vulkan.h>
 
-// std lib headers
-#include <string>
+// std
 #include <vector>
 #include <memory>
 

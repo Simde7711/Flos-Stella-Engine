@@ -1,4 +1,11 @@
 #include "fs.renderPassManager.hpp"
+#include "fs.device.hpp"
+
+#include <vulkan/vulkan.h>
+
+// std
+#include <array> 
+#include <stdexcept>
 
 namespace fs
 {

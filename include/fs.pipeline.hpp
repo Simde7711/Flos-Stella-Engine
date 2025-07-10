@@ -2,6 +2,8 @@
 
 #include "fs.device.hpp"
 
+#include <vulkan/vulkan.h>
+
 // std
 #include <string>
 #include <vector>

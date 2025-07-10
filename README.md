@@ -14,6 +14,8 @@ Executer compileProject.bat
 
 # ----------------- Todo ------------------------
 
+- Mettre en place le "Include what you use" strict (toute les includes de chaque fichier sont inclus même si obtenu d'un autre include)
+
 - Utiliser le logger à la place du std::cout
 
 - Ajouter un moyen de faire une hiéarchie avec un component comme dans unity.

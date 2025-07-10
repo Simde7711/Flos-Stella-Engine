@@ -4,7 +4,6 @@
 #include "fs.window.hpp"
 
 // std
-#include <string>
 #include <vector>
 #include <unordered_set>
 #include <mutex>

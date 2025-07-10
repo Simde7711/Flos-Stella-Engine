@@ -6,7 +6,10 @@
  */
  
  #include "fs.buffer.hpp"
+ #include "fs.device.hpp"
  
+ #include <vulkan/vulkan.h>
+
  // std
  #include <cassert>
  #include <cstring>
