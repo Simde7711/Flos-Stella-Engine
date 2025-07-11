@@ -1,4 +1,4 @@
-#include "fs.shaderCompiler.hpp"
+#include "compilers/fs.shaderCompiler.hpp"
 
 // std 
 #include <iostream>
@@ -66,30 +66,37 @@ namespace fs
         }
     }
 
-    bool FsShaderCompiler::CompareFileData(const std::filesystem::__cxx11::path &_file)
+    bool FsShaderCompiler::CompareFileData(const std::filesystem::path &_file)
     {
-        auto it = filesWriteTime.find(_file.filename().string());
-        if (it == filesWriteTime.end()) 
+        const auto name = _file.stem().string();
+        const auto lastSrcWrite = std::filesystem::last_write_time(_file);
+
+        auto it = filesWriteTime.find(name);
+        if (it == filesWriteTime.end() || it->second != lastSrcWrite)
         {
-            filesWriteTime[_file.filename().string()] = { std::filesystem::last_write_time(_file) };
+            filesWriteTime[name] = lastSrcWrite;
 
-            return true;
+            const std::string base = destinationPath + name;
+
+            const auto vertSPV = std::filesystem::path(base + ".vert.spv");
+            const auto fragSPV = std::filesystem::path(base + ".frag.spv");
+
+            bool needsCompile = false;
+
+            if (!std::filesystem::exists(vertSPV) || std::filesystem::last_write_time(vertSPV) < lastSrcWrite)
+                needsCompile = true;
+
+            if (!std::filesystem::exists(fragSPV) || std::filesystem::last_write_time(fragSPV) < lastSrcWrite)
+                needsCompile = true;
+
+            return needsCompile;
         }
 
-        if (it->second != std::filesystem::last_write_time(_file))
-        {
-            filesWriteTime[_file.filename().string()] = { std::filesystem::last_write_time(_file) };
-
-            return true;
-        }
-        else
-        {   
-            return false;
-        }
+        return false;
     }
 
     // TODO: Faire en sorte d'être capable de compiler dans .glsl, .vert, .frag sans causer de double recréation de pipelines.
-    void FsShaderCompiler::CompileShader(const std::filesystem::__cxx11::path &_file)
+    void FsShaderCompiler::CompileShader(const std::filesystem::path &_file)
     {
         const std::string glslcPath = "C:\\VulkanSDK\\1.4.309.0\\Bin\\glslc.exe";
         const std::string inputFile = _file.string();

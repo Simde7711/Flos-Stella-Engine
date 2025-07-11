@@ -9,7 +9,7 @@
 #include "fs.frameInfo.hpp"
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
-#include "fs.shaderCompiler.hpp"
+#include "compilers/fs.shaderCompiler.hpp"
 #include "fs.logger.hpp"
 
 #define GLM_FORCE_RADIANS

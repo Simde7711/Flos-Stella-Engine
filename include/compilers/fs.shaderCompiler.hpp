@@ -35,11 +35,11 @@ namespace fs
             /// @brief Compare le temps de modifaction du fichier de shaders à celle dans la cache.
             /// @param _file (std::filesystem::__cxx11::path) Chemin du ficher à comparer dans la cache.
             /// @return (bool) Retourne true si le le temps de modification n'est pas la même que la celle dans le cache, sinon false.
-            bool CompareFileData(const std::filesystem::__cxx11::path &_file);
+            bool CompareFileData(const std::filesystem::path &_file);
             
             /// @brief S'occupe de la compilation des fichers de shader vers .spv.
             /// @param _file (std::filesystem::__cxx11::path) Chemin du ficher à recompiler.
-            void CompileShader(const std::filesystem::__cxx11::path &_file);
+            void CompileShader(const std::filesystem::path &_file);
 
         private:
             static FsShaderCompiler instance;
