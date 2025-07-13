@@ -6,10 +6,7 @@
 
 namespace fs
 {
-    // unique instance de shaderCompiler
-    FsShaderCompiler FsShaderCompiler::instance;
-
-    void FsShaderCompiler::Init(FsDevice *_device, std::string _sourcePath, std::string _destinationPath)
+    FsShaderCompiler::FsShaderCompiler(FsDevice *_device, std::string _sourcePath, std::string _destinationPath)
     {
         device = _device;
 
@@ -19,15 +16,25 @@ namespace fs
         destinationPath = _destinationPath;
         std::cout << "Le destinationPath est: " << destinationPath << '\n';
 
+        // manque. vert et .frag
+        extensionsInput = { ".glsl" }; 
+        extensionsOutput = { ".vert.spv", ".frag.spv" };
+
         WatchForChanges(true);
+    }
+
+    FsShaderCompiler::~FsShaderCompiler()
+    {
+        device = nullptr;
     }
 
     void FsShaderCompiler::WatchForChanges(bool _startup)
     {
         try 
         {
-            for (const auto &file : std::filesystem::directory_iterator(sourcePath)) 
+            for (const auto &file : std::filesystem::recursive_directory_iterator(sourcePath)) 
             {
+                // faire en sorte de cheque les autres types de shader file
                 if (file.path().filename().extension() != ".glsl") continue;
 
                 if (std::filesystem::is_regular_file(file)) 
@@ -36,7 +43,7 @@ namespace fs
                     {
                         std::cout << "[FsShaderCompiler] Compilation du shader: " << file.path() << '\n';
 
-                        CompileShader(file.path());
+                        Compile(file.path());
                     }
                 }
             }
@@ -66,37 +73,8 @@ namespace fs
         }
     }
 
-    bool FsShaderCompiler::CompareFileData(const std::filesystem::path &_file)
-    {
-        const auto name = _file.stem().string();
-        const auto lastSrcWrite = std::filesystem::last_write_time(_file);
-
-        auto it = filesWriteTime.find(name);
-        if (it == filesWriteTime.end() || it->second != lastSrcWrite)
-        {
-            filesWriteTime[name] = lastSrcWrite;
-
-            const std::string base = destinationPath + name;
-
-            const auto vertSPV = std::filesystem::path(base + ".vert.spv");
-            const auto fragSPV = std::filesystem::path(base + ".frag.spv");
-
-            bool needsCompile = false;
-
-            if (!std::filesystem::exists(vertSPV) || std::filesystem::last_write_time(vertSPV) < lastSrcWrite)
-                needsCompile = true;
-
-            if (!std::filesystem::exists(fragSPV) || std::filesystem::last_write_time(fragSPV) < lastSrcWrite)
-                needsCompile = true;
-
-            return needsCompile;
-        }
-
-        return false;
-    }
-
     // TODO: Faire en sorte d'être capable de compiler dans .glsl, .vert, .frag sans causer de double recréation de pipelines.
-    void FsShaderCompiler::CompileShader(const std::filesystem::path &_file)
+    void FsShaderCompiler::Compile(const std::filesystem::path &_file)
     {
         const std::string glslcPath = "C:\\VulkanSDK\\1.4.309.0\\Bin\\glslc.exe";
         const std::string inputFile = _file.string();

@@ -18,6 +18,7 @@
 #include <glm/gtc/constants.hpp>
 
 // std
+#include <memory>
 #include <stdexcept>
 #include <chrono>
 #include <array>
@@ -46,8 +47,11 @@ namespace fs
         FsCoordinator::GetInstance().Init();
 
         // shader compiler
-        FsShaderCompiler::GetInstance().Init(device.get(), "../assets/shaders/", "shaders/");
+        shaderCompiler = std::make_unique<FsShaderCompiler>(device.get(), config["Compilers"]["assetsPath"], config["Compilers"]["outputShadersPath"]);
         
+        // dll compiler
+        // TODO: DLL COMPILER
+
         // TODO: temporaire pour faire marcher le init
         globalSetLayout = FsDescriptorSetLayout::Builder(*device)   
             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
@@ -178,7 +182,7 @@ namespace fs
                 renderer->EndSwapChainRenderPass(commandBuffer);
                 renderer->EndFrame();
 
-                FsShaderCompiler::GetInstance().WatchForChanges();
+                shaderCompiler->WatchForChanges();
             }
 
             FsLogger::GetInstance().FlushFile();

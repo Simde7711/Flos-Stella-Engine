@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ECS/components/fs.component.script.hpp"
+#include "gameScripts/fs.engineApi.hpp"
+
 
 // std
 #include <string>
@@ -17,7 +18,13 @@
 
 namespace fs 
 {
-    class ScriptLoader 
+    struct DllInstance 
+    {
+        void* dllHandle = nullptr;                       
+        std::string dllPath;                             
+    };
+
+    class FsScriptManager 
     {
         public:
             using ScriptFactory = std::function<std::unique_ptr<ScriptBase>()>;

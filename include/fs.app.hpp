@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "compilers/fs.shaderCompiler.hpp"
 #include "fs.window.hpp"
 #include "fs.device.hpp"
 #include "fs.renderer.hpp"
@@ -7,7 +8,6 @@
 
 // std
 #include <memory>
-#include <string>
 
 // mINI
 #include <mini/ini.h>
@@ -32,6 +32,7 @@ namespace fs
         std::unique_ptr<FsWindow> window;
         std::unique_ptr<FsDevice> device;
         std::unique_ptr<FsRenderer> renderer;
+        std::unique_ptr<FsShaderCompiler> shaderCompiler;
         std::unique_ptr<FsDescriptorPool> globalPool{};
         
         // TODO: temporaire

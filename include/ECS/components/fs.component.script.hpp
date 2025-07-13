@@ -1,33 +1,15 @@
 #pragma once
 
-#include "ECS/fs.types.hpp"
+#include "gameScripts/fs.engineApi.hpp"
 
 // std
 #include <memory>
-#include <string>
 #include <typeindex>
 #include <unordered_map>
 
 namespace fs 
 {
-    struct ScriptBase
-    {
-        virtual ~ScriptBase() = default;
-
-        Entity self;
-
-        virtual void Init() = 0;
-        virtual void Update() = 0;
-    };
-
-    struct ScriptInstance 
-    {
-        void* dllHandle = nullptr;                       
-        std::string dllPath;                             
-    };
-
-
-    struct ScriptComponent 
+    struct Script 
     {
         std::unordered_map<std::type_index, std::unique_ptr<ScriptBase>> scripts;
 
