@@ -14,6 +14,10 @@ Executer compileProject.bat
 
 # ----------------- Todo ------------------------
 
+- encapsuler les compilers dans un compilerManager
+
+- Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
+
 - Mettre en place le "Include what you use" strict (toute les includes de chaque fichier sont inclus même si obtenu d'un autre include)
 
 - Utiliser le logger à la place du std::cout

@@ -1,8 +1,9 @@
 #include "compilers/fs.shaderCompiler.hpp"
+#include "fs.logger.hpp"
 
 // std 
-#include <iostream>
 #include <cstdlib>
+#include <filesystem>
 
 namespace fs
 {
@@ -11,10 +12,10 @@ namespace fs
         device = _device;
 
         sourcePath = _sourcePath;
-        std::cout << "Le sourcePath est: " << sourcePath << '\n';
+        FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Le sourcePath est: " + sourcePath);
 
         destinationPath = _destinationPath;
-        std::cout << "Le destinationPath est: " << destinationPath << '\n';
+        FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Le destinationPath est: " + destinationPath);
 
         // manque. vert et .frag
         extensionsInput = { ".glsl" }; 
@@ -34,14 +35,16 @@ namespace fs
         {
             for (const auto &file : std::filesystem::recursive_directory_iterator(sourcePath)) 
             {
-                // faire en sorte de cheque les autres types de shader file
-                if (file.path().filename().extension() != ".glsl") continue;
+                if (std::find(extensionsInput.begin(), extensionsInput.end(), file.path().filename().extension()) == extensionsInput.end()) 
+                {
+                    continue;
+                }
 
                 if (std::filesystem::is_regular_file(file)) 
                 {
                     if (CompareFileData(file.path()))
                     {
-                        std::cout << "[FsShaderCompiler] Compilation du shader: " << file.path() << '\n';
+                        FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Compilation du shader: " + file.path().string());
 
                         Compile(file.path());
                     }
@@ -50,16 +53,16 @@ namespace fs
             
             if (!shadersChanged.empty() && !_startup)
             {
-                std::cout << "[FsShaderCompiler] Debut de la recreation des pipelines." << '\n';
+                FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Debut de la recreation des pipelines.");
 
                 vkDeviceWaitIdle(device->device());
                 for (const auto &key : shadersChanged)
                 {
-                    std::cout << "[FsShaderCompiler] Recreation des pipelines avec les shaders path: " 
-                        << key.vertShaderPath 
-                        << " et " 
-                        << key.fragShaderPath
-                        << '\n';
+                    FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Recreation des pipelines avec les shaders path: " 
+                        + key.vertShaderPath 
+                        + " et " 
+                        + key.fragShaderPath
+                    );
 
                     FsShaderManager::GetInstance().RecreatePipelinesFromShaderPath(key);
                 }
@@ -69,7 +72,7 @@ namespace fs
         } 
         catch (const std::filesystem::filesystem_error &e) 
         {
-            std::cerr << "[FsShaderCompiler] Error: " << e.what() << std::endl;
+            FsLogger::GetInstance().Log(LogType::Error, std::string("[FsShaderCompiler] Error: ") + e.what());
         }
     }
 
@@ -107,10 +110,17 @@ namespace fs
                 " " + inputFile +
                 " -o " + outputBase + stage.extension;
 
-            if (std::system(command.c_str()))
+            
+            int result = std::system(command.c_str());
+
+            if (result != 0)
             {
-                std::cerr << "[FsShaderCompiler] Shader compilation failed (" << stage.stage << "): " << inputFile << "\n";
+                FsLogger::GetInstance().Log(LogType::Error, "[FsDllCompiler] Shader compilation failed (" + stage.stage + "): " + inputFile + " with code: " + std::to_string(result));
                 return;
+            }
+            else
+            {
+                FsLogger::GetInstance().Log(LogType::System, "[FsDllCompiler] Shader compilation successful (" + stage.stage + "): " + inputFile);
             }
 
             if (stage.extension == ".vert.spv")

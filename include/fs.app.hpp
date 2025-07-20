@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "compilers/fs.shaderCompiler.hpp"
+#include "compilers/fs.dllCompiler.hpp"
 #include "fs.window.hpp"
 #include "fs.device.hpp"
 #include "fs.renderer.hpp"
@@ -33,6 +34,7 @@ namespace fs
         std::unique_ptr<FsDevice> device;
         std::unique_ptr<FsRenderer> renderer;
         std::unique_ptr<FsShaderCompiler> shaderCompiler;
+        std::unique_ptr<FsDllCompiler> dllCompiler;
         std::unique_ptr<FsDescriptorPool> globalPool{};
         
         // TODO: temporaire

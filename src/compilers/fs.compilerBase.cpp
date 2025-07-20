@@ -2,6 +2,8 @@
 
 // std
 #include <string>
+#include <algorithm>
+#include <fstream>
 
 namespace fs 
 {
@@ -33,5 +35,50 @@ namespace fs
         }
 
         return false;
+    }
+
+    std::vector<std::string> FsCompilerBase::ParseIncludes(const std::filesystem::path &_file) 
+    {
+        std::ifstream file(_file);
+        std::vector<std::string> includes;
+
+        std::string line;
+        while (std::getline(file, line)) 
+        {
+            if (line.find("#include") != std::string::npos) 
+            {
+                int first = line.find_first_of("\"");
+                int last = line.find_last_of("\"");
+
+                if (first == -1 || last == -1)
+                {  
+                    continue;
+                }
+
+                std::string includeContent = line.substr(first + 1, last - first - 1);
+
+                std::filesystem::path includePath(includeContent);
+                std::string includeFilename = includePath.filename().string();
+
+                includes.push_back(includeFilename);
+            }
+        }
+
+        return includes;
+    }
+
+    void FsCompilerBase::GetFilesMap()
+    {
+        for (const auto &file : std::filesystem::recursive_directory_iterator(sourcePath)) 
+        {
+            if (!file.is_regular_file()) continue;
+            if (filesMap.find(file.path().filename().string()) != filesMap.end()) continue;
+
+            auto ext = file.path().extension();
+            if (std::find(extensionsInput.begin(), extensionsInput.end(), ext) != extensionsInput.end())  
+            {
+                filesMap[file.path().filename().string()] = (std::filesystem::absolute(file.path()));
+            }
+        }
     }
 }

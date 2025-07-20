@@ -1,5 +1,6 @@
 #include "fs.app.hpp"
 
+#include "compilers/fs.dllCompiler.hpp"
 #include "keyboard_movement_controller.hpp"
 #include "systems/renderSystems/fs.meshRenderSystem.hpp"
 #include "systems/componentSystems/fs.pointLightSystem.hpp"
@@ -46,11 +47,9 @@ namespace fs
         // entity component system
         FsCoordinator::GetInstance().Init();
 
-        // shader compiler
+        // shader et dll compiler
         shaderCompiler = std::make_unique<FsShaderCompiler>(device.get(), config["Compilers"]["assetsPath"], config["Compilers"]["outputShadersPath"]);
-        
-        // dll compiler
-        // TODO: DLL COMPILER
+        dllCompiler = std::make_unique<FsDllCompiler>(config["Compilers"]["assetsPath"], config["Compilers"]["outputScriptsPath"]);
 
         // TODO: temporaire pour faire marcher le init
         globalSetLayout = FsDescriptorSetLayout::Builder(*device)   
@@ -183,6 +182,7 @@ namespace fs
                 renderer->EndFrame();
 
                 shaderCompiler->WatchForChanges();
+                dllCompiler->WatchForChanges();
             }
 
             FsLogger::GetInstance().FlushFile();
