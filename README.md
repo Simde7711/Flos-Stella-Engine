@@ -14,7 +14,7 @@ Executer compileProject.bat
 
 # ----------------- Todo ------------------------
 
-- encapsuler les compilers dans un compilerManager
+- Changer un peu shaderManager pour qu'il soit un peut plus proche du dll manager
 
 - Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
 

@@ -1,6 +1,5 @@
 #include "fs.app.hpp"
 
-#include "compilers/fs.dllCompiler.hpp"
 #include "keyboard_movement_controller.hpp"
 #include "systems/renderSystems/fs.meshRenderSystem.hpp"
 #include "systems/componentSystems/fs.pointLightSystem.hpp"
@@ -10,8 +9,9 @@
 #include "fs.frameInfo.hpp"
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
-#include "compilers/fs.shaderCompiler.hpp"
 #include "fs.logger.hpp"
+#include "compilers/fs.compilerManager.hpp"
+#include <string>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -47,9 +47,8 @@ namespace fs
         // entity component system
         FsCoordinator::GetInstance().Init();
 
-        // shader et dll compiler
-        shaderCompiler = std::make_unique<FsShaderCompiler>(device.get(), config["Compilers"]["assetsPath"], config["Compilers"]["outputShadersPath"]);
-        dllCompiler = std::make_unique<FsDllCompiler>(config["Compilers"]["assetsPath"], config["Compilers"]["outputScriptsPath"]);
+        // compilerManager
+        compilerManager = std::make_unique<FsCompilerManager>(device.get(), config["Compilers"]["assetsPath"], config["Compilers"]["outputShadersPath"], config["Compilers"]["outputScriptsPath"]);
 
         // TODO: temporaire pour faire marcher le init
         globalSetLayout = FsDescriptorSetLayout::Builder(*device)   
@@ -136,6 +135,8 @@ namespace fs
 
         auto currentTime = std::chrono::high_resolution_clock::now();
 
+        float compilerTimer = 0.0f;
+
         while (!window->ShouldClose())
         {
             glfwPollEvents();
@@ -181,8 +182,20 @@ namespace fs
                 renderer->EndSwapChainRenderPass(commandBuffer);
                 renderer->EndFrame();
 
-                shaderCompiler->WatchForChanges();
-                dllCompiler->WatchForChanges();
+                if (glfwGetWindowAttrib(window->GetGLFWwindow(), GLFW_FOCUSED)) 
+                {
+                    compilerTimer += frameTime;
+                    if (compilerTimer >= 2.0f) 
+                    {
+                        compilerManager->WatchForChanges();
+                        compilerTimer = 0.0f;
+                    }
+                } 
+                else 
+                {
+                    compilerTimer = 0.0f; 
+                }
+
             }
 
             FsLogger::GetInstance().FlushFile();
