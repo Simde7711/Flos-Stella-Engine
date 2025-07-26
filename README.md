@@ -12,10 +12,7 @@ cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_EXPORT_COMPILE_COMMANDS=ON; Cop
 Executer compileProject.bat
 
 
-# ----------------- Todo ------------------------
-
-- Changer un peu shaderManager pour qu'il soit un peut plus proche du dll manager
-
+# ----------------- Todo -------------------------
 - Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
 
 - Mettre en place le "Include what you use" strict (toute les includes de chaque fichier sont inclus même si obtenu d'un autre include)

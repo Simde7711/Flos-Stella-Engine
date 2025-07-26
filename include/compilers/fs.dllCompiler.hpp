@@ -18,7 +18,7 @@ namespace fs
             void WatchForChanges(bool _startup = false) override;
             void Compile(const std::filesystem::path &_file) override;
         private:
-
+            std::vector<std::string> engineIncludes;
             std::vector<std::string> scriptsChanged;
     };
 }

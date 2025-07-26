@@ -7,6 +7,7 @@
 // std
 #include <filesystem>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace fs
@@ -21,7 +22,9 @@ namespace fs
             void Compile(const std::filesystem::path &_file) override;
         private:
             FsDevice *device;
-
             std::vector<PipelineKey> shadersChanged;
+
+            std::string HandleInclude(const std::filesystem::path &_file, std::unordered_set<std::filesystem::path> &_includedFiles, bool _isRoot = false);
+            bool IsMainShader(const std::filesystem::path &_file);
     };
 }

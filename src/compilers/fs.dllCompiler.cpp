@@ -17,6 +17,7 @@ namespace fs
         destinationPath = _destinationPath;
         FsLogger::GetInstance().Log(LogType::System, "[FsDllCompiler] Le destinationPath est: " + destinationPath);
 
+        engineIncludes = { "fs.engineApi.hpp" };
         extensionsInput = { ".cpp", ".hpp" }; 
         extensionsOutput = { ".dll", };
 
@@ -33,27 +34,8 @@ namespace fs
         try 
         {
             GetFilesMap();
+            GetReverseDependencyGraph(engineIncludes);
 
-            for (const auto &fileMap : filesMap)
-            {
-                std::vector<std::string> includes = ParseIncludes(fileMap.second);
-
-                for (const auto &include : includes) 
-                {   
-                    if (include == "fs.engineApi.hpp") continue;
-                    
-                    auto includeMap = filesMap.find(include);
-                    if (includeMap != filesMap.end())
-                    {
-                        reverseDependencyGraph[includeMap->second.string()].push_back(fileMap.second);   
-                    }
-                    else
-                    {
-                        FsLogger::GetInstance().Log(LogType::Warning, "[FsDllCompiler] Script non trouvé dans le filesMap: " + include);
-                    }
-                }
-            }
-            
             std::vector<std::filesystem::path> dirtyFiles;
 
             for (const auto &it : filesMap) 
@@ -90,6 +72,8 @@ namespace fs
                 Compile(file);
             }
             
+
+            // manque la partie du script manager
             scriptsChanged.clear();
         } 
         catch (const std::filesystem::filesystem_error &e) 

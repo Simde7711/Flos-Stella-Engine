@@ -1,4 +1,5 @@
 #include "compilers/fs.compilerBase.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <string>
@@ -40,6 +41,10 @@ namespace fs
     std::vector<std::string> FsCompilerBase::ParseIncludes(const std::filesystem::path &_file) 
     {
         std::ifstream file(_file);
+        if (!file.is_open()) {
+            FsLogger::GetInstance().Log(LogType::Error, "[FsCompilerBase] Impossible d'ouvrir le fichier: " + _file.string());
+        }
+
         std::vector<std::string> includes;
 
         std::string line;
@@ -69,6 +74,8 @@ namespace fs
 
     void FsCompilerBase::GetFilesMap()
     {
+        filesMap.clear();
+
         for (const auto &file : std::filesystem::recursive_directory_iterator(sourcePath)) 
         {
             if (!file.is_regular_file()) continue;
@@ -78,6 +85,31 @@ namespace fs
             if (std::find(extensionsInput.begin(), extensionsInput.end(), ext) != extensionsInput.end())  
             {
                 filesMap[file.path().filename().string()] = (std::filesystem::absolute(file.path()));
+            }
+        }
+    }
+
+    void FsCompilerBase::GetReverseDependencyGraph(std::vector<std::string> _excludes) 
+    {
+        reverseDependencyGraph.clear();
+
+        for (const auto &fileMap : filesMap)
+        {
+            std::vector<std::string> includes = ParseIncludes(fileMap.second);
+
+            for (const auto &include : includes) 
+            {
+                if (std::find(_excludes.begin(), _excludes.end(), include) != _excludes.end()) continue;
+                
+                auto includeMap = filesMap.find(include);
+                if (includeMap != filesMap.end())
+                {
+                    reverseDependencyGraph[includeMap->second.string()].push_back(fileMap.second);   
+                }
+                else
+                {
+                    FsLogger::GetInstance().Log(LogType::Warning, "[FsCompilerBase] Script non trouvé dans le filesMap: " + include);
+                }
             }
         }
     }

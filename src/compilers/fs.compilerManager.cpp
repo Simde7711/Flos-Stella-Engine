@@ -10,7 +10,7 @@ namespace fs
     {
         // shader et dll compiler
         shaderCompiler = std::make_unique<FsShaderCompiler>(_device, _sourcePath, _destinationShaderPath);
-        dllCompiler = std::make_unique<FsDllCompiler>(_sourcePath, _destinationShaderPath);
+        dllCompiler = std::make_unique<FsDllCompiler>(_sourcePath, _destinationScriptPath);
     }
 
     FsCompilerManager::~FsCompilerManager()

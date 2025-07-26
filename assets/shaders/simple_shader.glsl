@@ -1,4 +1,8 @@
+// @Main shader
+
 #version 450
+
+#include "debug.glsl"
 
 #ifdef VERTEX_SHADER
     layout(location = 0) in vec3 position;

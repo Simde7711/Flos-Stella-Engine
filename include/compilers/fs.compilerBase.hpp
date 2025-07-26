@@ -24,7 +24,8 @@ namespace fs
 
             bool CompareFileData(const std::filesystem::path &_file);
             std::vector<std::string> ParseIncludes(const std::filesystem::path &_file);
-            void GetFilesMap(); 
+            void GetFilesMap();
+            void GetReverseDependencyGraph(std::vector<std::string> _excludes = {});
             virtual void Compile(const std::filesystem::path &_file) = 0;
     };
 }
