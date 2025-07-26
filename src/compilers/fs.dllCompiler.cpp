@@ -9,7 +9,7 @@
 
 namespace fs 
 {
-    FsDllCompiler::FsDllCompiler(std::string _sourcePath, std::string _destinationPath) 
+    FsDllCompiler::FsDllCompiler(std::string _sourcePath, std::string _destinationPath, nlohmann::json &_timeCache): FsCompilerBase(_timeCache)
     {
         sourcePath = _sourcePath;
         FsLogger::GetInstance().Log(LogType::System, "[FsDllCompiler] Le sourcePath est: " + sourcePath);
@@ -40,7 +40,7 @@ namespace fs
 
             for (const auto &it : filesMap) 
             {
-                if (CompareFileData(it.second)) 
+                if (CompareFileData(it.second, it.second.extension() == ".cpp" ? true : false)) 
                 {
                     dirtyFiles.push_back(it.second);
                 }

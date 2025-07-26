@@ -10,12 +10,15 @@
 #include <unordered_set>
 #include <vector>
 
+// nlohmann
+#include <nlohmann/json.hpp>
+
 namespace fs
 {
     class FsShaderCompiler: public FsCompilerBase
     {
         public:
-            FsShaderCompiler(FsDevice *_device, std::string _sourcePath, std::string _destinationPath);
+            FsShaderCompiler(FsDevice *_device, std::string _sourcePath, std::string _destinationPath, nlohmann::json &_timeCache);
             ~FsShaderCompiler();
 
             void WatchForChanges(bool _startup = false) override;

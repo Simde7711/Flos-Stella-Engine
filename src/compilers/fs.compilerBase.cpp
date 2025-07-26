@@ -5,37 +5,75 @@
 #include <string>
 #include <algorithm>
 #include <fstream>
+#include <filesystem>
+#include <chrono>
+
+// nlohmann
+#include <nlohmann/json.hpp>
 
 namespace fs 
 {
-    bool FsCompilerBase::CompareFileData(const std::filesystem::path &_file)
+    FsCompilerBase::FsCompilerBase(nlohmann::json &_timeCache): timeCache(_timeCache) 
     {
-        const auto name = _file.stem().string();
-        const auto lastSrcWrite = std::filesystem::last_write_time(_file);
 
-        auto it = filesWriteTime.find(name);
-        if (it == filesWriteTime.end() || it->second != lastSrcWrite)
+    }
+
+    bool FsCompilerBase::CompareFileData(const std::filesystem::path &_file, bool _giveOutput)
+    {
+        auto lastWriteTime = std::filesystem::last_write_time(_file);
+
+        #ifdef _WIN32
+            auto sctp = std::chrono::system_clock::time_point(
+                lastWriteTime.time_since_epoch() - std::chrono::hours(11644473600LL / 3600));
+        #else
+            auto sctp = std::chrono::system_clock::time_point(ftime.time_since_epoch());
+        #endif
+
+        auto currentFileWriteTime = std::chrono::system_clock::to_time_t(sctp);
+        
+        bool needsCompile = false;
+        
+        if (timeCache.contains(_file.string()))
         {
-            filesWriteTime[name] = lastSrcWrite;
+            int64_t cachedFileWriteTime = 0;
 
-            const std::string base = destinationPath + name;
+            try 
+            {
+                cachedFileWriteTime = timeCache[_file.string()].value("lastTimeWrite", 0);
+            }
+            catch (const std::exception& e) 
+            {
+                cachedFileWriteTime = 0;
+            }
 
-            bool needsCompile = false;
+            if (cachedFileWriteTime != currentFileWriteTime)
+            {
+                needsCompile = true;
+                timeCache[_file.string()]["lastTimeWrite"] = currentFileWriteTime;
+            }
+        }
+        else
+        {
+            needsCompile = true;
+            timeCache[_file.string()] = nlohmann::json{{"lastTimeWrite", currentFileWriteTime}};
+        }  
+        
+        if (_giveOutput) 
+        {   
+            const std::string base = destinationPath + _file.stem().string();
+            
             for (const std::string extension: extensionsOutput)
             {
                 const std::filesystem::path searchedOutput = std::filesystem::path(base + extension);
-
-                if (!std::filesystem::exists(searchedOutput) || std::filesystem::last_write_time(searchedOutput) < lastSrcWrite)
+                if (!std::filesystem::exists(searchedOutput))
                 {
                     needsCompile = true;
                     break;
                 }
             }
-
-            return needsCompile;
         }
 
-        return false;
+        return needsCompile;
     }
 
     std::vector<std::string> FsCompilerBase::ParseIncludes(const std::filesystem::path &_file) 

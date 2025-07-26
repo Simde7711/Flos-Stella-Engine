@@ -8,7 +8,7 @@
 
 namespace fs
 {
-    FsShaderCompiler::FsShaderCompiler(FsDevice *_device, std::string _sourcePath, std::string _destinationPath)
+    FsShaderCompiler::FsShaderCompiler(FsDevice *_device, std::string _sourcePath, std::string _destinationPath, nlohmann::json &_timeCache): FsCompilerBase(_timeCache)
     {
         device = _device;
 
@@ -41,7 +41,7 @@ namespace fs
 
             for (const auto &it : filesMap) 
             {
-                if (CompareFileData(it.second)) 
+                if (CompareFileData(it.second, IsMainShader(it.second))) 
                 {
                     dirtyFiles.push_back(it.second);
                 }

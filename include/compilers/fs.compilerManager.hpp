@@ -7,6 +7,9 @@
 // std
 #include <memory>
 
+// nlohmann
+#include <nlohmann/json.hpp>
+
 namespace fs 
 {
     class FsCompilerManager
@@ -17,7 +20,13 @@ namespace fs
             
             void WatchForChanges();
         private:
+            nlohmann::json timeCache;
+            std::string timeCacheFilePath;
+
             std::unique_ptr<FsShaderCompiler> shaderCompiler;
             std::unique_ptr<FsDllCompiler> dllCompiler;
+
+            void CreateTimeCache();
+            void FlushFile();
     };
 }

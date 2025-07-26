@@ -39,8 +39,15 @@ FetchContent_Declare(
     GIT_TAG v2.0.0rc13
 )
 
+# nlohmann/json - JSON for Modern C++
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+)
+
 # Download and make available all the declared dependencies
-FetchContent_MakeAvailable(glfw glm mini tinyobj)
+FetchContent_MakeAvailable(glfw glm mini tinyobj nlohmann_json)
 
 # -------------------- Environment & Platform Checks --------------------
 
@@ -78,4 +85,5 @@ target_link_libraries(${PROJECT_NAME}
     glfw                                   # GLFW window/input library
     glm::glm                               # GLM math library (interface target)
     tinyobjloader                          # tinyobjloader library
+    nlohmann_json::nlohmann_json           # nlohmann_json library
 )
