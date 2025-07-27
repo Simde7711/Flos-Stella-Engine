@@ -1,13 +1,14 @@
 #pragma once
 
 #include "ECS/fs.types.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <array>
 #include <cassert>
+#include <string>
 #include <unordered_map>
 #include <optional>
-#include <iostream>
 
 namespace fs
 {
@@ -37,7 +38,7 @@ namespace fs
 
         void RemoveData(Entity entity)
         {
-            std::cout << "[FsComponentArray] Removed component for entity: " << entity << std::endl;
+            FsLogger::GetInstance().Log(LogType::System, "[FsComponentArray] Removed component for entity: " + std::to_string(entity));
 
             assert(mEntityToIndexMap.find(entity) != mEntityToIndexMap.end() && "Removing non-existent component.");
 

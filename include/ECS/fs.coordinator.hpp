@@ -3,11 +3,12 @@
 #include "ECS/fs.componentManager.hpp"
 #include "ECS/fs.entityManager.hpp"
 #include "ECS/fs.types.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <memory>
+#include <string>
 #include <unordered_set>
-#include <iostream>
 
 namespace fs
 {
@@ -43,8 +44,8 @@ namespace fs
 
             void DestroyEntity(Entity entity)
             {
-                std::cout << "[FsCoordinator] Destroying entity: " << entity << std::endl;
-
+                FsLogger::GetInstance().Log(LogType::System, "[FsCoordinator] Destroying entity: " + std::to_string(entity));
+                
                 mComponentManager->EntityDestroyed(entity);
                 mEntityManager->DestroyEntity(entity);
             }
@@ -76,11 +77,11 @@ namespace fs
             }
 
             template<typename T>
-	        T& GetComponent(Entity entity)
+	        T &GetComponent(Entity entity)
             {
                 if (!HasComponent<T>(entity)) 
                 {
-                    std::cerr << "Error: Tried to get component of type " << typeid(T).name() << " from entity " << entity << " but it doesn't exist.\n";
+                    FsLogger::GetInstance().Log(LogType::Warning, "[FsCoordinator] Tried to get component of type " + std::string(typeid(T).name()) + " from entity " + std::to_string(entity) + " but it doesn't exist.");
                     throw std::runtime_error("Missing component");
                 }
                 else

@@ -1,11 +1,13 @@
 #include "fs.device.hpp"
 #include "fs.logger.hpp"
 
-// std headers
+// std
 #include <cstring>
 #include <iostream>
 #include <set>
+#include <string>
 #include <unordered_set>
+#include <sstream>
 
 namespace fs {
 
@@ -62,17 +64,19 @@ FsDevice::~FsDevice() {
 
   if (!trackedBuffers.empty()) 
   {
-    std::cerr << "[FsDevice] Warning: " << trackedBuffers.size() << " VkBuffer(s) still tracked!\n";
+    FsLogger::GetInstance().Log(LogType::Warning, "[FsDevice] " + std::to_string(trackedBuffers.size()) + " VkBuffer(s) still tracked!");
   }
 
   if (!trackedMemory.empty()) 
   {
-    std::cerr << "[FsDevice] Warning: " << trackedMemory.size() << " VkDeviceMemory object(s) still tracked!\n";
+    FsLogger::GetInstance().Log(LogType::Warning, "[FsDevice] " + std::to_string(trackedMemory.size()) + " VkDeviceMemory object(s) still tracked!");
   }
 
   for (auto buffer : trackedBuffers) 
   {
-    std::cerr << "  Leaked VkBuffer: " << buffer << "\n";
+    std::stringstream ss;
+    ss << "0x" << std::hex << reinterpret_cast<uintptr_t>(buffer);
+    FsLogger::GetInstance().Log(LogType::Error, "[FsDevice] Leaked VkBuffer: " + ss.str());
   }
 
   vkDestroyCommandPool(device_, commandPool, nullptr);
@@ -132,7 +136,7 @@ void FsDevice::pickPhysicalDevice() {
   if (deviceCount == 0) {
     throw std::runtime_error("failed to find GPUs with Vulkan support!");
   }
-  std::cout << "Device count: " << deviceCount << std::endl;
+  FsLogger::GetInstance().Log(LogType::System, "[FsDevice] Device count: " + std::to_string(deviceCount));
   std::vector<VkPhysicalDevice> devices(deviceCount);
   vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
@@ -148,7 +152,7 @@ void FsDevice::pickPhysicalDevice() {
   }
 
   vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-  std::cout << "physical device: " << properties.deviceName << std::endl;
+  FsLogger::GetInstance().Log(LogType::System, "[FsDevice] Physical device: " + std::string(properties.deviceName));
 }
 
 void FsDevice::createLogicalDevice() {
@@ -298,21 +302,26 @@ void FsDevice::hasGflwRequiredInstanceExtensions() {
   std::vector<VkExtensionProperties> extensions(extensionCount);
   vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-  std::cout << "available extensions:" << std::endl;
+  std::stringstream ss;
+  ss << "[FsDevice] Available extensions:\n";
   std::unordered_set<std::string> available;
   for (const auto &extension : extensions) {
-    std::cout << "\t" << extension.extensionName << std::endl;
+    ss << "\t" << extension.extensionName << "\n";
     available.insert(extension.extensionName);
   }
+  FsLogger::GetInstance().Log(LogType::System, ss.str());
 
-  std::cout << "required extensions:" << std::endl;
+  ss.str(""); 
+
+  ss << "[FsDevice] Required extensions:\n";
   auto requiredExtensions = getRequiredExtensions();
   for (const auto &required : requiredExtensions) {
-    std::cout << "\t" << required << std::endl;
+    ss << "\t" << required << "\n";
     if (available.find(required) == available.end()) {
       throw std::runtime_error("Missing required glfw extension");
     }
   }
+  FsLogger::GetInstance().Log(LogType::System, ss.str());
 }
 
 bool FsDevice::checkDeviceExtensionSupport(VkPhysicalDevice device) {

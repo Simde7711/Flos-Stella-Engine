@@ -1,8 +1,8 @@
 #include "fs.pipeline.hpp"
 #include "fs.model.hpp"
+#include "fs.logger.hpp"
 
 // std
-#include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <cassert>
@@ -35,7 +35,7 @@ namespace fs
         }
         else
         {
-            std::cout << "[FsPipeline] Le device a déjà été détruit" << '\n';
+            FsLogger::GetInstance().Log(LogType::System, "[FsPipeline] Le device a déjà été détruit");
         }
     }
 

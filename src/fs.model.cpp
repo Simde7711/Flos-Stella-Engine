@@ -1,5 +1,6 @@
 #include "fs.model.hpp"
 #include "fs.utils.hpp"
+#include "fs.logger.hpp"
 
 // libs
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -8,10 +9,11 @@
 #include <glm/gtx/hash.hpp>
 
 // std
+#include <string>
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include <unordered_map>
+#include <sstream>
 
 namespace std
 {
@@ -34,19 +36,23 @@ namespace fs
         CreateVertexBuffers(builder.vertices);
         CreateIndexBuffers(builder.indices);
 
-        std::cout << "[FsModel] Created from file, addr=" << this << "\n";
+        std::stringstream ss;
+        ss << "0x" << std::hex << reinterpret_cast<uintptr_t>(this);
+        FsLogger::GetInstance().Log(LogType::System, "[FsModel] Created from file, addr=" + ss.str());
     }
 
     FsModel::~FsModel()
     {
-       std::cout << "[FsModel] Destroyed, addr=" << this << "\n";
+        std::stringstream ss;
+        ss << "0x" << std::hex << reinterpret_cast<uintptr_t>(this);
+        FsLogger::GetInstance().Log(LogType::System, "[FsModel] Destroyed, addr=" + ss.str());
     }
 
     std::unique_ptr<FsModel> FsModel::CreateModelFromFile(FsDevice &device, const std::string &filepath)
     {
         Builder builder{};
         builder.LoadModel(filepath);
-        // std::cout << "Vertex count: " << builder.vertices.size() << "\n";
+        FsLogger::GetInstance().Log(LogType::System, "[FsModel] Vertex count: " + std::to_string(builder.vertices.size()));
         return std::make_unique<FsModel>(device, builder);
     }
 

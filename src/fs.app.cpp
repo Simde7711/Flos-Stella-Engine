@@ -11,7 +11,6 @@
 #include "fs.shaderManager.hpp"
 #include "fs.logger.hpp"
 #include "compilers/fs.compilerManager.hpp"
-#include <string>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -19,6 +18,7 @@
 #include <glm/gtc/constants.hpp>
 
 // std
+#include <string>
 #include <memory>
 #include <stdexcept>
 #include <chrono>
@@ -79,16 +79,6 @@ namespace fs
 
     void FsApp::run()
     {
-        int modelCount = 0;
-        for (Entity entity : FsCoordinator::GetInstance().mEntities) 
-        {
-            if (FsCoordinator::GetInstance().HasComponent<Mesh>(entity)) {
-                // std::cout << "[DEBUG] Entity " << entity << " has Model component\n";
-                ++modelCount;
-            }
-        }
-        // std::cout << "[DEBUG] Total Model components: " << modelCount << "\n";
-
         std::vector<std::unique_ptr<FsBuffer>> uboBuffers(FsSwapChain::MAX_FRAMES_IN_FLIGHT);
         for (int i = 0; i < uboBuffers.size(); i++)
         {

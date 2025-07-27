@@ -7,13 +7,18 @@
  
  #include "fs.buffer.hpp"
  #include "fs.device.hpp"
- 
- #include <vulkan/vulkan.h>
+ #include "fs.logger.hpp"
 
+ // vulkan
+ #include <vulkan/vulkan.h>
+ 
  // std
+ #include <string>
  #include <cassert>
  #include <cstring>
  #include <iostream>
+ #include <sstream>
+ #include <iomanip>
   
  namespace fs {
   
@@ -53,7 +58,10 @@
    device.createBuffer(bufferSize, usageFlags, memoryPropertyFlags, buffer, memory);
    
    bufferID = globalBufferID++;
-   std::cout << "[FsBuffer] Created buffer ID: " << bufferID << " (" << buffer << ")\n";
+
+   std::stringstream ss;
+   ss << "0x" << std::hex << std::setw(16) << std::setfill('0') << reinterpret_cast<uint64_t>(buffer);
+   FsLogger::GetInstance().Log(LogType::System, std::string("[FsBuffer] Created buffer ID: ") + std::to_string(bufferID) + " (" + ss.str() + ")");
 
    device.TrackBuffer(buffer);
    device.TrackMemory(memory);
@@ -77,7 +85,10 @@
     memory = VK_NULL_HANDLE;
   }
 
-  std::cout << "[FsBuffer] Destroying buffer ID: " << bufferID << " (" << buffer << ")\n";
+  std::stringstream ss;
+  ss << "0x" << std::hex << std::setw(16) << std::setfill('0') << reinterpret_cast<uint64_t>(buffer);
+  FsLogger::GetInstance().Log(LogType::System, std::string("[FsBuffer] Destroying buffer ID: ") + std::to_string(bufferID) + " (" + ss.str() + ")");
+
  }
   
  /**

@@ -2,12 +2,12 @@
 
 #include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <stdexcept>
 #include <array>
 #include <cassert>
-#include <iostream>
 
 namespace fs
 {
@@ -47,7 +47,7 @@ namespace fs
                 throw std::runtime_error("swap chains image(or depth) format has changed");
             }
 
-            std::cout << "[FsRenderer] Recreation des pipelines a cause d'un changement dans la swapChain." << '\n';
+            FsLogger::GetInstance().Log(LogType::System, "[FsRenderer] Recreation des pipelines a cause d'un changement dans la swapChain.");
             FsShaderManager::GetInstance().RecreatePipelines();
         }
     }

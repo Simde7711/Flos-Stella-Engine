@@ -3,12 +3,12 @@
 #include "ECS/fs.componentArray.hpp"
 #include "ECS/components/fs.components.hpp"
 #include "ECS/fs.types.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <any>
 #include <memory>
 #include <unordered_map>
-#include <iostream>
 
 namespace fs
 {
@@ -52,7 +52,7 @@ namespace fs
         }
 
         template<typename T>
-        T& GetComponent(Entity entity)
+        T &GetComponent(Entity entity)
         {
             return GetComponentArray<T>()->GetData(entity);
         }
@@ -71,7 +71,7 @@ namespace fs
 
         void EntityDestroyed(Entity entity)
 	    {
-            std::cout << "[FsComponentManager] Entity destroyed: " << entity << std::endl;
+            FsLogger::GetInstance().Log(LogType::System, "[FsComponentManager] Entity destroyed: " + std::to_string(entity));
 
             for (auto const& pair : mComponentArrays)
             {

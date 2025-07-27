@@ -1,11 +1,11 @@
 #include "fs.swapChain.hpp"
 #include "fs.renderPassManager.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <cstdlib>
 #include <array>
 #include <cstring>
-#include <iostream>
 #include <limits>
 #include <set>
 #include <stdexcept>
@@ -346,7 +346,7 @@ VkPresentModeKHR FsSwapChain::chooseSwapPresentMode(const std::vector<VkPresentM
     //   }
     // }
 
-    std::cout << "Present mode: V-Sync" << std::endl;
+    FsLogger::GetInstance().Log(LogType::System, "[FsSwapChain] Present mode: V-Sync");
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 

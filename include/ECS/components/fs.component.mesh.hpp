@@ -1,10 +1,11 @@
 #pragma once
 
 #include "fs.model.hpp"
+#include "fs.logger.hpp"
 
 // std
 #include <memory>
-#include <iostream>
+#include <sstream>
 
 namespace fs 
 {
@@ -30,7 +31,9 @@ namespace fs
 
         ~Mesh()
         {
-            std::cout << "[Mesh] Destroyed (ptr=" << model.get() << ") \n";
+            std::stringstream ss;
+            ss << "0x" << std::hex << reinterpret_cast<uintptr_t>(model.get());
+            FsLogger::GetInstance().Log(LogType::System, "[Mesh] Destroyed (ptr=" + ss.str() + ")");
         }
 
         // move support

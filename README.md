@@ -13,11 +13,13 @@ Executer compileProject.bat
 
 
 # ----------------- Todo -------------------------
+- Changer le formatage de certain fichier comme device et swapChain
+
+- changement du coordinator, maybe renvoyer des pointers a la place des references
+
 - Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
 
 - Mettre en place le "Include what you use" strict (toute les includes de chaque fichier sont inclus même si obtenu d'un autre include)
-
-- Utiliser le logger à la place du std::cout
 
 - Ajouter un moyen de faire une hiéarchie avec un component comme dans unity.
 
