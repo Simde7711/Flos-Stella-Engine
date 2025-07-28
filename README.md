@@ -13,9 +13,9 @@ Executer compileProject.bat
 
 
 # ----------------- Todo -------------------------
-- Changer le formatage de certain fichier comme device et swapChain
-
 - changement du coordinator, maybe renvoyer des pointers a la place des references
+
+- Faire en sorte de pas devoir absolument créer le component avant de faire add component (donc faire un sorte de dummy empty si rien n'est passé)
 
 - Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
 
