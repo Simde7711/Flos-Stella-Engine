@@ -36,8 +36,8 @@ namespace fs
                 mEntities.insert(entity);
                 
                 // ajoute les components universels
-                AddComponent<Transform>(entity, Transform{});
-                AddComponent<Active>(entity, Active{});
+                AddComponent<Transform>(entity);
+                AddComponent<Active>(entity);
 
                 return entity;
             }
@@ -54,6 +54,13 @@ namespace fs
 	        void RegisterComponent()
             {
                 mComponentManager->RegisterComponent<T>();
+            }
+
+            template<typename T>
+            void AddComponent(Entity entity)
+            {
+                T component{};
+                AddComponent<T>(entity, std::move(component));
             }
 
             template<typename T>
@@ -115,7 +122,7 @@ namespace fs
             {
                 if (active)  
                 {    
-                    AddComponent<Active>(entity, Active{});
+                    AddComponent<Active>(entity);
                 }
                 else
                 {
