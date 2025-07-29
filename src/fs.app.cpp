@@ -1,5 +1,6 @@
 #include "fs.app.hpp"
 
+#include "ECS/components/fs.component.pointLight.hpp"
 #include "keyboard_movement_controller.hpp"
 #include "systems/renderSystems/fs.meshRenderSystem.hpp"
 #include "systems/componentSystems/fs.pointLightSystem.hpp"
@@ -7,7 +8,6 @@
 #include "fs.buffer.hpp"
 #include "ECS/fs.coordinator.hpp"
 #include "fs.frameInfo.hpp"
-#include "fs.renderPassManager.hpp"
 #include "fs.shaderManager.hpp"
 #include "fs.logger.hpp"
 #include "compilers/fs.compilerManager.hpp"
@@ -20,9 +20,7 @@
 // std
 #include <string>
 #include <memory>
-#include <stdexcept>
 #include <chrono>
-#include <array>
 #include <vector>
 #include <cassert>
 
@@ -119,7 +117,7 @@ namespace fs
 
         // créer l'entity de la caméra
         Entity entityCamera = FsCoordinator::GetInstance().CreateEntity();
-        FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).translation.z = -2.5f;
+        FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera)->translation.z = -2.5f;
 
         KeyboardMovementController cameraController{};
 
@@ -136,7 +134,7 @@ namespace fs
             currentTime = newTime;
 
             cameraController.MoveInPlaneXZ(window->GetGLFWwindow(), frameTime, FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera));
-            camera.SetViewYXZ(FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).translation, FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera).rotation);
+            camera.SetViewYXZ(FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera)->translation, FsCoordinator::GetInstance().GetComponent<Transform>(entityCamera)->rotation);
 
             float aspect = renderer->GetAspectRatio();
             // camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
@@ -204,10 +202,10 @@ namespace fs
             FsCoordinator::GetInstance().AddComponent<Mesh>(flatVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/flat_vase.obj")});
 
             // set le transform
-            Transform &transform1 = FsCoordinator::GetInstance().GetComponent<Transform>(flatVase);
-            transform1.translation = {-.5f, .5f, 0.f};
-            transform1.rotation.z = 0.f;
-            transform1.scale = {3.f, 1.5, 3.f};
+            Transform *transform1 = FsCoordinator::GetInstance().GetComponent<Transform>(flatVase);
+            transform1->translation = {-.5f, .5f, 0.f};
+            transform1->rotation.z = 0.f;
+            transform1->scale = {3.f, 1.5, 3.f};
 
             // set le shader
             PipelineKey pipelineKey1{};
@@ -226,10 +224,10 @@ namespace fs
             FsCoordinator::GetInstance().AddComponent<Mesh>(smoothVase, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/smooth_vase.obj")});
 
             // set le transform
-            Transform &transform2 = FsCoordinator::GetInstance().GetComponent<Transform>(smoothVase);
-            transform2.translation = {.5f, .5f, 0.f};
-            transform2.rotation.z = 0.f;
-            transform2.scale = glm::vec3(3.f);
+            Transform *transform2 = FsCoordinator::GetInstance().GetComponent<Transform>(smoothVase);
+            transform2->translation = {.5f, .5f, 0.f};
+            transform2->rotation.z = 0.f;
+            transform2->scale = glm::vec3(3.f);
         
             // set le shader
             PipelineKey pipelineKey2{};
@@ -248,9 +246,9 @@ namespace fs
             FsCoordinator::GetInstance().AddComponent<Mesh>(floor, Mesh{FsModel::CreateModelFromFile(*device, "../assets/models/quad.obj")});
 
             // set le transform
-            Transform &transform3 = FsCoordinator::GetInstance().GetComponent<Transform>(floor);
-            transform3.translation = {0.f, .5f, 0.f};
-            transform3.scale = {3.f, 1.f, 3.f};
+            Transform *transform3 = FsCoordinator::GetInstance().GetComponent<Transform>(floor);
+            transform3->translation = {0.f, .5f, 0.f};
+            transform3->scale = {3.f, 1.f, 3.f};
 
             // set le shader
             PipelineKey pipelineKey3{};
@@ -277,18 +275,18 @@ namespace fs
             FsCoordinator::GetInstance().AddComponent<PointLight>(pointLightEntity, PointLight{});
             
             // récupère les components
-            Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(pointLightEntity);
-            PointLight &pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(pointLightEntity);
+            Transform *transform = FsCoordinator::GetInstance().GetComponent<Transform>(pointLightEntity);
+            PointLight *pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(pointLightEntity);
             
-            pointLight.lightIntensity = 0.2f;
-            pointLight.color = lightColors[i];
+            pointLight->lightIntensity = 0.2f;
+            pointLight->color = lightColors[i];
 
             auto rotateLight =  
                 glm::rotate(glm::mat4(1.f), 
                 (i * glm::two_pi<float>()) / lightColors.size(), 
                 {0.f, -1.f, 0.f});
 
-            transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+            transform->translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
         }
     }
 }

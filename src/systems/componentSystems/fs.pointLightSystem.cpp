@@ -20,13 +20,13 @@ namespace fs
 
             
             // update light position
-            Transform &transform = FsCoordinator::GetInstance().GetComponent<Transform>(entity);
-            transform.translation = glm::vec3(rotateLight * glm::vec4(transform.translation, 1.f));
+            Transform *transform = FsCoordinator::GetInstance().GetComponent<Transform>(entity);
+            transform->translation = glm::vec3(rotateLight * glm::vec4(transform->translation, 1.f));
 
             // copy light to ubo
-            PointLight &pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(entity);
-            globalUbo.pointLights[lightIndex].position = glm::vec4(transform.translation, 1.f);
-            globalUbo.pointLights[lightIndex].color = glm::vec4(pointLight.color, pointLight.lightIntensity);
+            PointLight *pointLight = FsCoordinator::GetInstance().GetComponent<PointLight>(entity);
+            globalUbo.pointLights[lightIndex].position = glm::vec4(transform->translation, 1.f);
+            globalUbo.pointLights[lightIndex].color = glm::vec4(pointLight->color, pointLight->lightIntensity);
             
             lightIndex++;
         }

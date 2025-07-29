@@ -3,7 +3,7 @@
 
 namespace fs
 {
-    void KeyboardMovementController::MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform &transform)
+    void KeyboardMovementController::MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform *transform)
     {
         glm::vec3 rotate{0.f};
         if (glfwGetKey(window, keys.lookRight) == GLFW_PRESS)
@@ -25,11 +25,11 @@ namespace fs
 
         if (glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon())
         {
-            transform.rotation += lookSpeed * deltaTime * glm::normalize(rotate);
+            transform->rotation += lookSpeed * deltaTime * glm::normalize(rotate);
         }
 
-        transform.rotation.x = glm::clamp(transform.rotation.x, -1.5f, 1.5f);
-        transform.rotation.y = glm::mod(transform.rotation.y, glm::two_pi<float>());
+        transform->rotation.x = glm::clamp(transform->rotation.x, -1.5f, 1.5f);
+        transform->rotation.y = glm::mod(transform->rotation.y, glm::two_pi<float>());
 
         // Base local directions
         const glm::vec3 forwardDir = glm::vec3(0.f, 0.f, 1.f);
@@ -58,10 +58,10 @@ namespace fs
         {
             moveDir = glm::normalize(moveDir);
 
-            glm::quat rotQuat = glm::quat(transform.rotation); // if in radians
+            glm::quat rotQuat = glm::quat(transform->rotation); // if in radians
             glm::vec3 worldDir = rotQuat * moveDir;
 
-            transform.translation += moveSpeed * deltaTime * worldDir;
+            transform->translation += moveSpeed * deltaTime * worldDir;
         }
     }
 }

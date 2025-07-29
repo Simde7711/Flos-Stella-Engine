@@ -63,7 +63,7 @@ namespace fs
         {
             assert(mEntityToIndexMap.find(entity) != mEntityToIndexMap.end() && "Retrieving non-existent component.");
 
-            auto &opt = mComponentArray[mEntityToIndexMap[entity]];
+            std::optional<T> &opt = mComponentArray[mEntityToIndexMap[entity]];
             assert(opt.has_value() && "Optional component is empty");
 
             return *opt;

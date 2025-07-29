@@ -24,6 +24,6 @@ namespace fs
             float moveSpeed{3.f};
             float lookSpeed{1.5f};
 
-            void MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform &transform);
+            void MoveInPlaneXZ(GLFWwindow *window, float deltaTime, Transform *transform);
     };
 }
