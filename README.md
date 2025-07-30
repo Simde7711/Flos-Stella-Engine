@@ -13,8 +13,6 @@ Executer compileProject.bat
 
 
 # ----------------- Todo -------------------------
-- Faire en sorte de pas devoir absolument créer le component avant de faire add component (donc faire un sorte de dummy empty si rien n'est passé)
-
 - Mettre en place un assets Manager qui s'occuper de tout ce qui est assets, lazy loading et abstraction entre un système shaderManager ou Models.
 
 - Mettre en place le "Include what you use" strict (toute les includes de chaque fichier sont inclus même si obtenu d'un autre include)
