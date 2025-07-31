@@ -1,10 +1,12 @@
 #include "compilers/fs.shaderCompiler.hpp"
 #include "fs.logger.hpp"
+#include "fs.shaderManager.hpp"
 
 // std 
 #include <cstdlib>
 #include <unordered_set>
 #include <filesystem>
+#include <sstream>
 
 namespace fs
 {
@@ -18,8 +20,7 @@ namespace fs
         destinationPath = _destinationPath;
         FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Le destinationPath est: " + destinationPath);
 
-        // manque. vert et .frag
-        extensionsInput = { ".glsl" }; 
+        extensionsInput = { ".glsl", ".vert", ".frag" }; 
         extensionsOutput = { ".vert.spv", ".frag.spv" };
 
         WatchForChanges(true);
@@ -79,13 +80,28 @@ namespace fs
                 FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Debut de la recreation des pipelines.");
 
                 vkDeviceWaitIdle(device->device());
-                for (const auto &key : shadersChanged)
+                for (const auto &shader : shadersChanged)
                 {
-                    FsLogger::GetInstance().Log(LogType::System, "[FsShaderCompiler] Recreation des pipelines avec les shaders path: " 
-                        + key.vertShaderPath 
-                        + " et " 
-                        + key.fragShaderPath
-                    );
+                    PipelineKey key = shader.second;
+
+                    std::ostringstream msg;
+                    msg << "[FsShaderCompiler] Recreation des pipelines avec le shader path: ";
+
+                    bool wroteAny = false;
+
+                    if (!key.vertShaderPath.empty()) 
+                    {
+                        msg << key.vertShaderPath;
+                        wroteAny = true;
+                    }
+
+                    if (!key.fragShaderPath.empty()) 
+                    {
+                        if (wroteAny) msg << " et ";
+                        msg << key.fragShaderPath;
+                    }
+
+                    FsLogger::GetInstance().Log(LogType::System, msg.str());
 
                     FsShaderManager::GetInstance().RecreatePipelinesFromShaderPath(key);
                 }
@@ -99,12 +115,19 @@ namespace fs
         }
     }
 
-    // TODO: Faire en sorte d'être capable de compiler dans .glsl, .vert, .frag sans causer de double recréation de pipelines.
     void FsShaderCompiler::Compile(const std::filesystem::path &_file)
     {
         const std::string glslcPath = "C:\\VulkanSDK\\1.4.309.0\\Bin\\glslc.exe";
         const std::string outputBase = destinationPath + _file.stem().string();
 
+        PipelineKey pipelineKey;
+
+        auto it = shadersChanged.find(outputBase);
+        if (it != shadersChanged.end()) 
+        {
+            pipelineKey = it->second;
+        }    
+        
         struct ShaderStage
         {
             std::string define;
@@ -112,7 +135,6 @@ namespace fs
             std::string extension;
         };
 
-        PipelineKey pipelineKey{};
         std::vector<ShaderStage> stages;
 
         if (_file.extension() == ".glsl") 
@@ -120,6 +142,22 @@ namespace fs
             stages = 
             {
                 {"VERTEX_SHADER", "vert", ".vert.spv"},
+                {"FRAGMENT_SHADER", "frag", ".frag.spv"}
+            };
+        }
+
+        if (_file.extension() == ".vert") 
+        {
+            stages = 
+            {
+                {"VERTEX_SHADER", "vert", ".vert.spv"}
+            };
+        }
+
+        if (_file.extension() == ".frag") 
+        {
+            stages = 
+            {
                 {"FRAGMENT_SHADER", "frag", ".frag.spv"}
             };
         }
@@ -166,7 +204,7 @@ namespace fs
             std::remove(tempFilePath.c_str());
         }
 
-        shadersChanged.push_back(pipelineKey);
+        shadersChanged[outputBase] = pipelineKey;
     }
 
     std::string FsShaderCompiler::HandleInclude(const std::filesystem::path &_file, std::unordered_set<std::filesystem::path> &_includedFiles, bool _isRoot) 

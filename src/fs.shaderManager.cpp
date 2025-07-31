@@ -2,6 +2,7 @@
 #include "fs.device.hpp"
 #include "fs.renderer.hpp"
 
+// vulkan
 #include <vulkan/vulkan.h>
 
 // std
@@ -65,7 +66,7 @@ namespace fs
     {
         for (auto& [key, data] : pipelineCache)
         {
-            if (key.vertShaderPath == _key.vertShaderPath && key.fragShaderPath == _key.fragShaderPath)
+            if (key.vertShaderPath == _key.vertShaderPath || key.fragShaderPath == _key.fragShaderPath)
             {
                 vkDestroyPipelineLayout(device->device(), data.pipelineLayout, nullptr);
 
